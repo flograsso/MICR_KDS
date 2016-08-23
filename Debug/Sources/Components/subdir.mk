@@ -5,26 +5,26 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
 ../Sources/Components/CONSOLE.c \
-../Sources/Components/LM35.c \
 ../Sources/Components/MB7360.c \
 ../Sources/Components/MMA8451Q.c \
 ../Sources/Components/SIM800L.c \
+../Sources/Components/TMP36.c \
 ../Sources/Components/UTILITIES.c 
 
 OBJS += \
 ./Sources/Components/CONSOLE.o \
-./Sources/Components/LM35.o \
 ./Sources/Components/MB7360.o \
 ./Sources/Components/MMA8451Q.o \
 ./Sources/Components/SIM800L.o \
+./Sources/Components/TMP36.o \
 ./Sources/Components/UTILITIES.o 
 
 C_DEPS += \
 ./Sources/Components/CONSOLE.d \
-./Sources/Components/LM35.d \
 ./Sources/Components/MB7360.d \
 ./Sources/Components/MMA8451Q.d \
 ./Sources/Components/SIM800L.d \
+./Sources/Components/TMP36.d \
 ./Sources/Components/UTILITIES.d 
 
 

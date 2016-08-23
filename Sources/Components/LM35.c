@@ -4,14 +4,17 @@
  * @file LM35.c
  * @author Valentin Korenblit
  * @date March, 2016
- * @brief Driver for LM35DZ temperature sensor
+ * @brief Driver for TMP36GZ temperature sensor
  * 		  The driver works reading analog voltage input
  * 		  Uses ADC0-SE12
- * 		  PIN 1: Vcc (4 to 30V)
+ * 		  PIN 1: Vcc (2.7 to 5.5V)
  * 		  PIN 2: Analog Voltage Output: connect this pin to ADC0_SE12 = PTB2 = J10_6 OF FRDM-KL25Z
  * 		  PIN 3: Gnd: connect this pin to Ground
  *
  *		  Linear output, 10mV / ºC
+ *		  Offset Voltage: 0.5V
+ *		  Output Voltage 25ºC: 750 mV
+*		  Operates from -40 ºC to +125ºC
  */
 
 #include "LM35.h"
@@ -65,7 +68,8 @@ float LM35_GET_TEMPERATURE_CELSIUS()
 	 */
 
 	 /*CONVERT mV TO TEMPERATURE IN ºC*/
-	 temperature = mv / 10.0;
+	 temperature = mv-500;
+	 temperature /= 10.0;
 	 UTILITIES_FLOAT_TO_STR(&temperature,Lm35.Temperature,2);
 	 CONSOLE_SEND("LM35 TEMPERATURE VALUE: ",24);
 	 CONSOLE_SEND(Lm35.Temperature,strlen(Lm35.Temperature));
