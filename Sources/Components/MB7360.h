@@ -35,6 +35,19 @@
 #define MB7360_MILIVOLTS_PER_MM 0.64453125f
 
 /**
+ * @brief RESOLUTION FOR MB7360 ANALOG VOLTAGE IS VCC/5120 PER MILIMETER
+ *
+ */
+#define MB7360_MILIVOLTS_PER_MM 0.64453125f
+
+/**
+ * @brief RESOLUTION FOR MaxSonar EZ1 ANALOG VOLTAGE IS VCC/512 PER INCH
+ * @details 3.3V / 512 / 25.4 mm/inch 
+ *
+ */
+#define EZ1_MILIVOLTS_PER_MM 0.253752f
+
+/**
  * @brief Struct for MB7360 properties
  *
  */
