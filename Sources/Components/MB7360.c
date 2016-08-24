@@ -68,7 +68,7 @@ uint16_t MB7360_GET_DISTANCE_MM()
 
 	 /*CONVERT mV TO DISTANCE*/
 	 milivolts =  ( ADC0_SE8_RAW_VALUE * 3300.0 ) / ADC0_MAX_VALUE;
-	 milivolts /= MB7360_MILIVOLTS_PER_MM;
+	 milivolts /= EZ1_MILIVOLTS_PER_MM;
 
 	 centimeters = milivolts / 10.0;
 	 distance = (int) milivolts;
