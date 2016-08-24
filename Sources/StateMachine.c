@@ -626,7 +626,7 @@ void Application()
 				}
 
 				/*CONTAINER FALL*/
-				if  ( (boardState = MMA8451_GET_STATE(MMA8451_VERTICAL)) == MMA8451_FALL)
+				if  ( (boardState = MMA8451_GET_STATE(MMA8451_HORIZONTAL)) == MMA8451_FALL)
 				{
 					if(!fallAlarmSent)
 					{

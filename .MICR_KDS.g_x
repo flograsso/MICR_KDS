@@ -301,5 +301,5 @@
       <File Name="SDK/platform/hal/inc/fsl_pmc_hal.h" FileDate="2016-05-31, 14:51:50" FileAge="1464717110000" FileType="1048576" CompNumb="56" />
     </GeneratedByPE>
   </GeneratedFilesList>
-  <CodeGenReference>15</CodeGenReference>
+  <CodeGenReference>19</CodeGenReference>
 </CodeGenerationInfo>
