@@ -16,6 +16,17 @@
  * 		  PIN 6: Vcc: connect this pin to 3.3V
  * 		  PIN 7: Gnd: connect this pin to Ground
  *
+ * * @brief Driver for MaxBotix MaxSonar EZ1
+ * 		  The driver works reading analog voltage input
+ * 		  Uses ADC0-SE8
+ * 		  PIN 1: BW : leave unconnected
+ * 		  PIN 2: PW (Pulse Width Output) : leave unconnected
+ * 		  PIN 3: AN (Analog Voltage Output): connect this pin to ADC0_SE8 = PTB0 = J10_2 OF FRDM-KL25Z
+ * 		  PIN 4: RX (Ranging Start/Stop): connect this pin to digital output PTC9 = J1_16
+ * 		  		 Bring high this pin for 20 us to start measuring
+ * 		  PIN 5: Serial Output: leave this pin unconnected
+ * 		  PIN 6: Vcc: connect this pin to 3.3V
+ * 		  PIN 7: Gnd: connect this pin to Ground
  *
  */
 

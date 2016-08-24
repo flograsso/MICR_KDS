@@ -11,6 +11,9 @@
  * 		  PIN 2: Analog Voltage Output: connect this pin to ADC0_SE12 = PTB2 = J10_6 OF FRDM-KL25Z
  * 		  PIN 3: Gnd: connect this pin to Ground
  *
+ * 		  WARNING!
+ * 		  PIN 1 and PIN 3 are in the contrary that you see in the datasheet
+ *
  *		  Linear output, 10mV / ºC
  *		  Offset Voltage: 0.5V
  *		  Output Voltage 25ºC: 750 mV
