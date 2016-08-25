@@ -12,7 +12,7 @@
  * 		  PIN 3: Gnd: connect this pin to Ground
  *
  * 		  WARNING!
- * 		  PIN 1 and PIN 3 are in the contrary that you see in the datasheet
+ * 		  PIN 1 and PIN 3 have to be connected the other way round as the datasheets says
  *
  *		  Linear output, 10mV / ºC
  *		  Offset Voltage: 0.5V
