@@ -9,10 +9,20 @@
  * 		  Baudrate:57600
  * 		  8N1
  *
+ *
  * 		  PIN 3VT: SIM800L Transmitter: connect to UART1_RX = PTE1 = J2_20
  * 		  PIN 3VR: SIM800L Receiver: connect to UART1_TX = PTE0 = J2_18
  *
  *		  Supply voltage: 3.2 to 4.8 V
+ *
+ * @brief Driver Simcom SIM900
+ *
+ *		  Arduino 5V Pin: 5V
+ * 		  Arduino GND Pin: GND
+ *		  Arduino RX Pin (Pin 0): UART1_RX = PTE0 = J2_18
+ *		  Arduino TX Pin (Pin 1): UART1_TX = PTE1 = J2_20
+ *		  iComBoard jumpers must be connected like figure 5 in the datasheet.
+ *		  	TXD to D1 and RXD to D0
  *
  *
  */
