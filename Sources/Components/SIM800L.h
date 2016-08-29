@@ -185,7 +185,7 @@ const char *AT_CBTE="AT+CBTE?\r\n";
 const char *AT_CGATT_1="AT+CGATT=1\r\n";
 const char *AT_CGATT="AT+CGATT?\r\n";
 const char *AT_CSTT="AT+CSTT?\r\n";
-const char *AT_CSTT_CMNET="AT+CSTT=\"CMNET\"\r\n";
+const char *AT_CSTT_CMNET="AT+CSTT=\"internet.gprs.unifon.com.ar\"\r\n";
 const char *AT_CIICR="AT+CIICR\r\n";
 const char *AT_CIFSR="AT+CIFSR\r\n";
 const char *AT_CIPSHUT="AT+CIPSHUT\r\n";
@@ -306,7 +306,7 @@ uint8_t SIM800L_GET_SIGNAL_QUALITY();
  * This method sends command "ATE0" to SIM800L and checks if echo is disabled
  *
  * @author Valentin Korenblit
- * @return 1 if success (echo disabled) or 0 if command failed (echo enabled)a
+ * @return 1 if success (echo disabled) or 0 if command failed (echo enabled)
  *
  */
 
