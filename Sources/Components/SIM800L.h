@@ -300,6 +300,18 @@ void SIM800L_RESPONSE();
  *
  */
 uint8_t SIM800L_GET_SIGNAL_QUALITY();
+
+/**
+ *
+ * This method sends command "ATE0" to SIM800L and checks if echo is disabled
+ *
+ * @author Valentin Korenblit
+ * @return 1 if success (echo disabled) or 0 if command failed (echo enabled)a
+ *
+ */
+
+uint8_t SIM800L_IS_ECHO_DISABLED();
+
 /**
  *
  * This method sends command "AT" to SIM800L and checks if it returns OK
