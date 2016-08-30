@@ -21,7 +21,9 @@
  * @brief Time for LPTMR interrupt in microseconds: SET TO ONE MINUTE => MÁX TIME SLEEPING
  *
  */
-#define LPTMR_INTERRUPT_PERIOD_US		2000000 /*ONE MINUTE*/
+#define LPTMR_INTERRUPT_PERIOD_US		2000000 /*2 SEC*/
+
+/*#define LPTMR_INTERRUPT_PERIOD_US		60000000 ONE MINUTE*/
 /**
  * @brief Number of LPTMR interrupts per hour
  *
