@@ -593,15 +593,22 @@ void Application()
 				CONSOLE_INIT();
 				CONSOLE_SEND("TO IDLE...\r\n",12);
 
+				/*TURN OFF BLUE LED*/
+				GPIO_DRV_SetPinOutput(LEDRGB_BLUE);
+
 				/*PROCESSOR IN LOW POWER MODE*/
 				POWER_SYS_SetWakeupModule(kLlwuWakeupModule0,true);
 				if( POWER_SYS_SetMode(1,kPowerManagerPolicyAgreement) != kPowerManagerSuccess)
 				{
+					/*ERROR*/
 					GPIO_DRV_ClearPinOutput(LEDRGB_RED);
 				}
 
 				/*AFTER LLWU INTERRUPT*/
-				GPIO_DRV_TogglePinOutput(LEDRGB_BLUE);
+
+				/*TURN ON BLUE LED*/
+				GPIO_DRV_ClearPinOutput(LEDRGB_BLUE);
+
 				minutes++;
 				currentState = MEASURE_TEMPERATURE;
 				break;
