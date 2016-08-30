@@ -11,13 +11,11 @@
  * 		  PIN 2: Analog Voltage Output: connect this pin to ADC0_SE12 = PTB2 = J10_6 OF FRDM-KL25Z
  * 		  PIN 3: Gnd: connect this pin to Ground
  *
- * 		  WARNING!
- * 		  PIN 1 and PIN 3 have to be connected the other way round as the datasheets says
  *
  *		  Linear output, 10mV / ºC
  *		  Offset Voltage: 0.5V
  *		  Output Voltage 25ºC: 750 mV
-*		  Operates from -40 ºC to +125ºC
+ *		  Operates from -40 ºC to +125ºC
  */
 
 #include "LM35.h"
