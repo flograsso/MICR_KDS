@@ -34,4 +34,4 @@
 
 /Debug/*
 Debug
-.g_x
+*.g_x
