@@ -185,7 +185,7 @@ const char *AT_CBTE="AT+CBTE?\r\n";
 const char *AT_CGATT_1="AT+CGATT=1\r\n";
 const char *AT_CGATT="AT+CGATT?\r\n";
 const char *AT_CSTT="AT+CSTT?\r\n";
-const char *AT_CSTT_CMNET="AT+CSTT=\"internet.gprs.unifon.com.ar\"\r\n";
+const char *AT_CSTT_CMNET="AT+CSTT=\"CMNET\"\r\n";
 const char *AT_CIICR="AT+CIICR\r\n";
 const char *AT_CIFSR="AT+CIFSR\r\n";
 const char *AT_CIPSHUT="AT+CIPSHUT\r\n";
