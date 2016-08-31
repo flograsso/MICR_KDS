@@ -18,14 +18,16 @@
  */
 #define MAX_ALLOWED_SEND_PERIOD_HOURS 8
 /**
- * @brief Time for LPTMR interrupt in microseconds: SET TO ONE MINUTE => MÁX TIME SLEEPING
+ * @brief Time for LPTMR interrupt in microseconds
+ * @attention SET TO ONE MINUTE (60000000) => MÁX TIME SLEEPING
  *
  */
-#define LPTMR_INTERRUPT_PERIOD_US		6000000 /*6 SEC*/
-
+#define LPTMR_INTERRUPT_PERIOD_US		1000000 /*1 SEC*/
 /*#define LPTMR_INTERRUPT_PERIOD_US		60000000 ONE MINUTE*/
+
 /**
  * @brief Number of LPTMR interrupts per hour
+ * @details LPTMR_INTERRUPT_PERIOD_US / 1000000
  *
  */
 #define TICKS_HOUR 60

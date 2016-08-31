@@ -15,7 +15,7 @@ extern SIM800L_t SIM800L;
 extern mb7360_t Mb7360;
 extern lm35_t Lm35;
 extern mma8451q_t Mma8451q;
-
+extern volatile uint32_t g_configFlag;
 
 static char * stringFromMessageType(message_t messageType)
 {
@@ -567,15 +567,16 @@ void Application()
 {
 	uint32_t minutes=0, hours=0, samples=0, arrayIndex=0;
 	static state_t currentState = RECEIVE_CONFIG;
-	static uint32_t sendPeriodHours, samplesPerHour,minutesLeaveIdle;
+	static uint32_t sendPeriodHours, samplesPerHour,minutesLeaveIdle = 0;
 	static uint32_t distanceSamplesArray[MAX_ALLOWED_SEND_PERIOD_HOURS];
 	static message_t messageType = SAMPLES;
 	static uint16_t distance;
-	static uint8_t HTTP_BUFFER[256];
+	//static uint8_t HTTP_BUFFER[256];
 	static float temperature;
 	static SIM800L_error_t exitCode;
 	static MMA8451_state_t boardState;
 	uint8_t fullAlarmSent = 0, fireAlarmSent = 0, fallAlarmSent = 0;
+
 
 	while(1)
 	{
