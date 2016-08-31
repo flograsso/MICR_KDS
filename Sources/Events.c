@@ -41,6 +41,8 @@ extern console_t Console;
 
 extern SIM800L_t SIM800L;
 
+volatile uint32_t g_configFlag = 0;
+
 /*
 ** ===================================================================
 **     Callback    : UART_1_RxCallback

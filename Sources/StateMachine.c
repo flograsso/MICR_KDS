@@ -10,12 +10,13 @@
 
 #include "StateMachine.h"
 
+extern volatile uint32_t g_configFlag;
 extern console_t Console;
 extern SIM800L_t SIM800L;
 extern mb7360_t Mb7360;
 extern lm35_t Lm35;
 extern mma8451q_t Mma8451q;
-extern volatile uint32_t g_configFlag;
+
 
 static char * stringFromMessageType(message_t messageType)
 {
