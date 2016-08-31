@@ -98,8 +98,6 @@ void UART_1_TxCallback(uint32_t instance, void * uartState)
 void LPSCI_0_RxCallback(uint32_t instance, void * lpsciState)
 {
   /* Write your code here ... */
-	Console.LPSCI0_RxBuffer[Console.LPSCI0_RxBuffer_Index]=Console.LPSCI0_RxByte;
-	Console.LPSCI0_RxBuffer_Index++;
 }
 
 /*
