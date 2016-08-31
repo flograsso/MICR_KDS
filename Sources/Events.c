@@ -41,7 +41,6 @@ extern console_t Console;
 
 extern SIM800L_t SIM800L;
 
-extern volatile uint32_t ticks;
 /*
 ** ===================================================================
 **     Callback    : UART_1_RxCallback
@@ -142,7 +141,8 @@ void LPTMR_0_OnTimerCompare(void)
 void pwrMan1_llwuIRQHandler(void)
 {
   /* Write your code here. For example clear LLWU wake up flags ... */
-	power_manager_error_code_t ret;
+
+	//power_manager_error_code_t ret;
 
 	if(POWER_SYS_GetWakeupModuleFlag(kLlwuWakeupModule0) == true)
 	{
