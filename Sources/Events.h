@@ -168,6 +168,29 @@ void I2C0_IRQHandler(void);
            modify it according to possible new request.
 #endif
 
+#ifdef tpmTmr1_IDX
+/*
+** ===================================================================
+**     Interrupt handler : tpmTmr1_IRQHandler
+**
+**     Description :
+**         User interrupt service routine. 
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+void tpmTmr1_IRQHandler(void);
+#else
+  /* This IRQ handler is not used by tpmTmr1 component. The purpose may be
+   * that the component has been removed or disabled. It is recommended to 
+   * remove this handler because Processor Expert cannot modify it according to 
+   * possible new request (e.g. in case that another component uses this
+   * interrupt vector). */
+  #warning This IRQ handler is not used by tpmTmr1 component.\
+           It is recommended to remove this because Processor Expert cannot\
+           modify it according to possible new request.
+#endif
+
 /* END Events */
 
 #ifdef __cplusplus

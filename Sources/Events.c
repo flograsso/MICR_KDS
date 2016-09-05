@@ -41,7 +41,7 @@ extern console_t Console;
 
 extern SIM800L_t SIM800L;
 
-volatile uint32_t g_configFlag = 0;
+
 
 /*
 ** ===================================================================
@@ -98,7 +98,8 @@ void UART_1_TxCallback(uint32_t instance, void * uartState)
 */
 void LPSCI_0_RxCallback(uint32_t instance, void * lpsciState)
 {
-  /* Write your code here ... */
+
+
 }
 
 /*
@@ -127,7 +128,11 @@ void ADC0_IRQHandler(void)
 */
 void LPTMR_0_OnTimerCompare(void)
 {
-  /* Write your code here ... */
+	/*Configuration Timeout
+	 *Default settings will be set */
+
+	/*Configuration Timeout*/
+	Console.configFlag=1;
 }
 
 /*
@@ -182,6 +187,33 @@ void I2C0_IRQHandler(void)
    * possible new request (e.g. in case that another component uses this
    * interrupt vector). */
   #warning This IRQ handler is not used by i2cCom1 component.\
+           It is recommended to remove this because Processor Expert cannot\
+           modify it according to possible new request.
+#endif
+
+#ifdef tpmTmr1_IDX
+/*
+** ===================================================================
+**     Interrupt handler : tpmTmr1_IRQHandler
+**
+**     Description :
+**         User interrupt service routine. 
+**     Parameters  : None
+**     Returns     : Nothing
+** ===================================================================
+*/
+void tpmTmr1_IRQHandler(void)
+{
+  TPM_DRV_IRQHandler(tpmTmr1_IDX);
+  /* Write your code here ... */
+}
+#else
+  /* This IRQ handler is not used by tpmTmr1 component. The purpose may be
+   * that the component has been removed or disabled. It is recommended to 
+   * remove this handler because Processor Expert cannot modify it according to 
+   * possible new request (e.g. in case that another component uses this
+   * interrupt vector). */
+  #warning This IRQ handler is not used by tpmTmr1 component.\
            It is recommended to remove this because Processor Expert cannot\
            modify it according to possible new request.
 #endif

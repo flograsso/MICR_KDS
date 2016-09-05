@@ -12,11 +12,31 @@
 #define SOURCES_STATEMACHINE_H_
 
 #include "Hardware.h"
+
+/**
+ * @brief Default value of send period time
+ *
+ */
+#define DEFAULT_SEND_PERIOD_HOURS 1
+
+/**
+ * @brief Default value of samples per hour
+ *
+ */
+#define DEFAULT_SAMPLES_PER_HOUR 10
+
 /**
  * @brief Maximun number of hours for sending data
  *
  */
 #define MAX_ALLOWED_SEND_PERIOD_HOURS 8
+
+/**
+ * @brief Time for LPTMR config timeout interrupt in microseconds
+ *
+ */
+#define LPTMR_CONFIG_TIMEOUT_INTERRUPT_PERIOD_US		10000000 /*10 SEC*/
+
 /**
  * @brief Time for LPTMR interrupt in microseconds
  * @attention SET TO ONE MINUTE (60000000) => MÁX TIME SLEEPING
