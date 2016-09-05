@@ -154,41 +154,57 @@ void RECEIVE_CONFIG_TASK(uint32_t *sendPeriodHours,uint32_t *samplesPerHour, uin
 	uint32_t receivedData = 0;
 
 	CONSOLE_SEND("WELCOME TO RELIQUA\r\n",20);
+	CONSOLE_SEND("SELECT PERIOD FOR SENDING DATA IN HOURS\r\n",41);
+	CONSOLE_SEND("FORMAT: 1 DIGIT (1-8) - MIN PERIOD: 1 HS - MAX PERIOD: 8 HS\r\n",61);
 
-	/*SELECT PERIOD FOR SENDING DATA*/
-	do
-	{
-		CONSOLE_SEND("SELECT PERIOD FOR SENDING DATA IN HOURS\r\n",41);
-		CONSOLE_SEND("FORMAT: 1 DIGIT (1-8) - MIN PERIOD: 1 HS - MAX PERIOD: 8 HS\r\n",61);
-		CONSOLE_RECEIVE(&CONSOLE_BUFFER_1,1);
+	/*Configuration timeout timer start*/
+	LPTMR_DRV_SetTimerPeriodUs(LPTMR_0_IDX,LPTMR_CONFIG_TIMEOUT_INTERRUPT_PERIOD_US);
+	LPTMR_DRV_Start(LPTMR_0_IDX);
+
+	CONSOLE_RECEIVE(&CONSOLE_BUFFER_1,1);
+	LPTMR_DRV_Stop(LPTMR_0_IDX);
+	if(Console.configFlag==0){
+
 		receivedData = atoi(&CONSOLE_BUFFER_1);
-		if( (receivedData == 0) || (receivedData > MAX_ALLOWED_SEND_PERIOD_HOURS)  )
+		while( (receivedData == 0) || (receivedData > MAX_ALLOWED_SEND_PERIOD_HOURS))
 		{
 			CONSOLE_SEND("INVALID VALUE\r\n",15);
+			CONSOLE_SEND("SELECT PERIOD FOR SENDING DATA IN HOURS\r\n",41);
+			CONSOLE_SEND("FORMAT: 1 DIGIT (1-8) - MIN PERIOD: 1 HS - MAX PERIOD: 8 HS\r\n",61);
+			CONSOLE_RECEIVE(&CONSOLE_BUFFER_1,1);
+			receivedData = atoi(&CONSOLE_BUFFER_1);
 		}
-	}while( (receivedData == 0) || (receivedData > MAX_ALLOWED_SEND_PERIOD_HOURS));
-	CONSOLE_SEND("SELECTED VALUE: ",16);
-	CONSOLE_SEND(&CONSOLE_BUFFER_1,1);
-	CONSOLE_SEND(" HOURS\r\n",7);
-    *sendPeriodHours = receivedData;
 
-	/*SELECT SAMPLES PER HOUR*/
-	do
-	{
-		CONSOLE_SEND("SELECT SAMPLES PER HOUR\r\n",25);
-		CONSOLE_SEND("FORMAT: 2 DIGITS\r\n",18);
-		CONSOLE_SEND("ACCEPTED VALUES: (01 - 02 - 03 - 04 - 05 - 06 - 10\r\n",52);
-		CONSOLE_RECEIVE(CONSOLE_BUFFER_2,2);
-		receivedData = atoi(CONSOLE_BUFFER_2);
-		if( (receivedData != 1) && (receivedData != 2) && (receivedData != 3) && (receivedData != 4) && (receivedData != 5) && (receivedData != 6) && (receivedData != 10))
+		*sendPeriodHours = receivedData;
+		CONSOLE_SEND("SELECTED VALUE: ",16);
+		CONSOLE_SEND(&CONSOLE_BUFFER_1,1);
+		CONSOLE_SEND(" HOURS\r\n",7);
+
+		/*SELECT SAMPLES PER HOUR*/
+		do
 		{
-			CONSOLE_SEND("INVALID VALUE\r\n",15);
+			CONSOLE_SEND("SELECT SAMPLES PER HOUR\r\n",25);
+			CONSOLE_SEND("FORMAT: 2 DIGITS\r\n",18);
+			CONSOLE_SEND("ACCEPTED VALUES: (01 - 02 - 03 - 04 - 05 - 06 - 10\r\n",52);
+			CONSOLE_RECEIVE(CONSOLE_BUFFER_2,2);
+			receivedData = atoi(CONSOLE_BUFFER_2);
+			if( (receivedData != 1) && (receivedData != 2) && (receivedData != 3) && (receivedData != 4) && (receivedData != 5) && (receivedData != 6) && (receivedData != 10))
+			{
+				CONSOLE_SEND("INVALID VALUE\r\n",15);
+			}
+		}while( (receivedData != 1) && (receivedData != 2) && (receivedData != 3) && (receivedData != 4) && (receivedData != 5) && (receivedData != 6) && (receivedData != 10));
+		CONSOLE_SEND("SELECTED VALUE: ",16);
+		CONSOLE_SEND(CONSOLE_BUFFER_2,2);
+		CONSOLE_SEND(" SAMPLES PER HOURS\r\n",19);
+		* samplesPerHour = receivedData;
+	}
+	else{
+		/*Set default values*/
+		CONSOLE_SEND("LOAD DEFAULT VALUES\r\n",21);
+		* sendPeriodHours = DEFAULT_SEND_PERIOD_HOURS;
+		* samplesPerHour = DEFAULT_SAMPLES_PER_HOUR;
 		}
-	}while( (receivedData != 1) && (receivedData != 2) && (receivedData != 3) && (receivedData != 4) && (receivedData != 5) && (receivedData != 6) && (receivedData != 10));
-	CONSOLE_SEND("SELECTED VALUE: ",16);
-	CONSOLE_SEND(CONSOLE_BUFFER_2,2);
-	CONSOLE_SEND(" SAMPLES PER HOURS\r\n",19);
-	* samplesPerHour = receivedData;
+
 	* minutesLeaveIdle = TICKS_HOUR / (*samplesPerHour);
 }
 

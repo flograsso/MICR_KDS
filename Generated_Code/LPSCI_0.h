@@ -7,7 +7,7 @@
 **     Version     : Component 1.3.0, Driver 01.00, CPU db: 3.00.000
 **     Repository  : KSDK 1.3.0
 **     Compiler    : GNU C Compiler
-**     Date/Time   : 2016-06-15, 11:08, # CodeGen: 0
+**     Date/Time   : 2016-09-01, 16:10, # CodeGen: 36
 **     Contents    :
 **         LPSCI_DRV_Init                - lpsci_status_t LPSCI_DRV_Init(uint32_t instance,lpsci_state_t *...
 **         LPSCI_DRV_Deinit              - lpsci_status_t LPSCI_DRV_Deinit(uint32_t instance);

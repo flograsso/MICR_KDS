@@ -23,13 +23,14 @@
 
 /**
  * @brief Struct for CONSOLE properties
- *
+ * @var configFlag variable to control if configuration timeout occur
  */
 typedef struct{
 
 	uint8_t  LPSCI0_RxByte;
 	uint8_t  LPSCI0_RxBuffer[CONSOLE_RX_BUFFER_SIZE];
 	uint32_t LPSCI0_RxBuffer_Index;
+	uint8_t configFlag;
 }console_t;
 
 /**

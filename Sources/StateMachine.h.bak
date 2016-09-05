@@ -32,6 +32,12 @@
 #define MAX_ALLOWED_SEND_PERIOD_HOURS 8
 
 /**
+<<<<<<< HEAD
+ * @brief Time for LPTMR interrupt in microseconds
+ * @attention SET TO ONE MINUTE (60000000) => MÁX TIME SLEEPING
+ *
+ */
+=======
  * @brief Time for LPTMR config timeout interrupt in microseconds
  *
  */
@@ -42,6 +48,7 @@
  * @attention SET TO ONE MINUTE (60000000) => MÁX TIME SLEEPING
  *
  */
+>>>>>>> auto_config
 #define LPTMR_INTERRUPT_PERIOD_US		1000000 /*1 SEC*/
 /*#define LPTMR_INTERRUPT_PERIOD_US		60000000 ONE MINUTE*/
 
