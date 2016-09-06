@@ -52,10 +52,10 @@
  */
 #define TICKS_HOUR 60
 /**
- * @brief Distance when container is full. MB7360 returns 300mm if object is 300mm or nearer to the sensor.
+ * @brief Distance when container is full. MB7360 returns 400mm if object is 400mm or nearer to the sensor.
  *
  */
-#define	DISTANCE_THRESHOLD				325
+#define	DISTANCE_THRESHOLD				400
 /**
  * @brief When MB7360 reading fails, it returns máx value: 4995mm
  *

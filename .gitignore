@@ -32,10 +32,30 @@
 *.dSYM/
 *.su
 
+/Debug/*
+*.ProcessorExpert.g_x
+*ProcessorExpert.g_c
 /*.g_c
 /*.g_x
 *.g_c
 *.g_x
+*.g_c.*
+*.g_x.*
+
+/*.g_c
+/*.g_x
+*.G_C
+*.G_X
+*.G_C.*
+*.G_X.*
+
+.MICR_KDS.g_x
+.MICR_KDS.g_c
+
+*.MICR_KDS.g_x
+*.MICR_KDS.g_c
+
+
 
 /*.cwGeneratedFileSetLog
 /Generated_Code
