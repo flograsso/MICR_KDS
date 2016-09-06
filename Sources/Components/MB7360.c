@@ -48,8 +48,16 @@ void MB7360_INIT()
 	ADC16_DRV_GetAutoCalibrationParam(ADC0_IDX, &ADC0_CALIBRATION_PARAMS);
 	ADC16_DRV_SetCalibrationParam(ADC0_IDX, &ADC0_CALIBRATION_PARAMS);
 
+	/*Sensor calibration. First read cycle
+	 * It is important that objects not be close to the sensor during this calibration cycle.
+	 * The best sensitivity is obtained when the detection area is clear for fourteen inches,
+	 * but good results are common when clear for at least seven inches
+	 * */
 	GPIO_DRV_ClearPinOutput(GPIO_PTC9);
 	OSA_TimeDelay(200);
+	GPIO_DRV_SetPinOutput(GPIO_PTC9);
+	OSA_TimeDelay(100);
+	GPIO_DRV_ClearPinOutput(GPIO_PTC9);
 }
 
 void MB7360_DEINIT()
