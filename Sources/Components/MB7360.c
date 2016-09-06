@@ -33,7 +33,6 @@
 #include "MB7360.h"
 
 mb7360_t Mb7360;
-static uint8_t firstCycle = 0;
 
 void MB7360_INIT()
 {
@@ -54,12 +53,9 @@ void MB7360_INIT()
 	 * The best sensitivity is obtained when the detection area is clear for fourteen inches,
 	 * but good results are common when clear for at least seven inches
 	 * */
-	if (firstCycle == 0){
-		GPIO_DRV_ClearPinOutput(GPIO_PTC9);
-		OSA_TimeDelay(200);
-		GPIO_DRV_SetPinOutput(GPIO_PTC9);
-		firstCycle=1;
-	}
+	GPIO_DRV_ClearPinOutput(GPIO_PTC9);
+	OSA_TimeDelay(200);
+	GPIO_DRV_SetPinOutput(GPIO_PTC9);
 	OSA_TimeDelay(100);
 	GPIO_DRV_ClearPinOutput(GPIO_PTC9);
 }
