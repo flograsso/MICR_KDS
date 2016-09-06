@@ -47,7 +47,9 @@ void MB7360_INIT()
 
 	ADC16_DRV_GetAutoCalibrationParam(ADC0_IDX, &ADC0_CALIBRATION_PARAMS);
 	ADC16_DRV_SetCalibrationParam(ADC0_IDX, &ADC0_CALIBRATION_PARAMS);
+
 	GPIO_DRV_ClearPinOutput(GPIO_PTC9);
+	OSA_TimeDelay(200);
 }
 
 void MB7360_DEINIT()
@@ -89,7 +91,7 @@ uint16_t MB7360_GET_DISTANCE_MM()
 	 CONSOLE_SEND("MB7360 ADC RAW VALUE: ",22);
 	 CONSOLE_SEND(Mb7360.RawValue,strlen(Mb7360.RawValue));
 	 CONSOLE_SEND("\r\n",2);
-	 */
+	*/
 
 	 /*CONVERT RAW VALUE TO DISTANCE*/
 	 sprintf(Mb7360.Distance,"%d",distance);
@@ -97,12 +99,13 @@ uint16_t MB7360_GET_DISTANCE_MM()
 	 CONSOLE_SEND(Mb7360.Distance,strlen(Mb7360.Distance));
 	 CONSOLE_SEND("mm\r\n",4);
 
-	 UTILITIES_FLOAT_TO_STR(&centimeters,centimetersStr,2);
 	 /*
+	 UTILITIES_FLOAT_TO_STR(&centimeters,centimetersStr,2);
+
 	 CONSOLE_SEND("MB7360 DISTANCE VALUE: ",23);
 	 CONSOLE_SEND(centimetersStr,strlen(centimetersStr));
 	 CONSOLE_SEND("cm\r\n",4);
-	 */
+	  */
 
 	 return distance;
 }
