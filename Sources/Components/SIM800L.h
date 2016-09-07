@@ -45,10 +45,16 @@
  */
 #define SIM800L_IMEI_LENGTH 15
 /**
- * @brief MAX ALLOWED REBOOTS BEFORE LEAVING
+ * @brief MAX ALLOWED FULL REBOOTS BEFORE LEAVING
  *
  */
-#define SIM800L_MAX_REBOOTS 3
+#define SIM800L_MAX_FULL_REBOOTS 3
+/**
+ * @brief MAX ALLOWED PARTIAL REBOOTS BEFORE LEAVING
+ *
+ */
+#define SIM800L_MAX_PARTIAL_REBOOTS 5
+
 /**
  * @brief MAX RETRIES FOR CHECKING NETWORK REGISTRATION
  *
@@ -120,6 +126,7 @@ typedef struct{
 typedef enum
 {
 	INIT_SIM800L,
+	RESET_SIM800L,
 	CHECK_STATUS_SIM800L,
 	CONNECT_GPRS,
 	ESTABLISH_TCP_CONNECTION,
@@ -208,7 +215,7 @@ const char *SERVER_CESPI = "163.10.181.17";
 
 const char *AT_CSCS_GSM="AT+CSCS=\"GSM\"\r\n";
 const char *AT_CMGF_1="AT+CMGF=1\r\n";
-const char *AT_CMGS= "AT+CMGS=2215313000\r\n";
+const char *AT_CMGS= "AT+CMGS=2215732981\r\n";
 /**
  * @brief String returned when command fails
  *
@@ -217,13 +224,23 @@ const char *COMMAND_ERROR="COMMAND ERROR\r\n";
 
 /**
  *
- * This method turns on UART1 and resets SIM800L
+ * This method turns on UART1 and turn on SIM800L with a high pulse on PWRKEY
  *
  * @author Valentin Korenblit
  * @return void
  *
  */
 void SIM800L_INIT();
+
+/**
+ *
+ * This method resets SIM800L
+ *
+ * @author Federico Lo Grasso
+ * @return void
+ *
+ */
+void SIM800L_RESET();
 /**
  *
  * This method turns off UART1 and SIM800L

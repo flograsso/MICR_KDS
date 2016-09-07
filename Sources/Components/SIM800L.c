@@ -21,7 +21,7 @@
  * 		  Arduino GND Pin: GND
  *		  Arduino RX Pin (Pin 0): UART1_RX = PTE0 = J2_18
  *		  Arduino TX Pin (Pin 1): UART1_TX = PTE1 = J2_20
- *		  Arduino D9 Pin: PTC8
+ *		  Arduino D9 Pin (PWRKEY): PTC8
  *		  iComBoard jumpers must be connected like figure 5 in the datasheet.
  *		  	TXD to D1 and RXD to D0
  *
@@ -34,7 +34,6 @@ SIM800L_t SIM800L;
 
 void SIM800L_INIT()
 {
-
 	SIM800L.UART1_RxBuffer_Index=0;
 	SIM800L.Sim_Ready=0;
 	SIM800L.Active=0;
@@ -46,10 +45,37 @@ void SIM800L_INIT()
 
 	/*HARD RESET*/
 	GPIO_DRV_ClearPinOutput(GPIO_PTC8);
-	OSA_TimeDelay(SIM800L_TURN_OFF_MS);
+	OSA_TimeDelay(2000);
 	GPIO_DRV_SetPinOutput(GPIO_PTC8);
+	OSA_TimeDelay(SIM800L_TURN_OFF_MS);
+	GPIO_DRV_ClearPinOutput(GPIO_PTC8);
 	OSA_TimeDelay(SIM800L_WAIT_FOR_NETWORK_MS);
 	SIM800L_FLUSH_RX_BUFFER();
+}
+
+void SIM800L_RESET(){
+	CONSOLE_SEND("RESETTING SIM800L...\r\n",22);
+
+	/*Turn OFF*/
+	if(!SIM800L_POWER_DOWN_SOFTWARE()){
+		GPIO_DRV_ClearPinOutput(GPIO_PTC8);
+		OSA_TimeDelay(2000);
+		GPIO_DRV_SetPinOutput(GPIO_PTC8);
+		OSA_TimeDelay(SIM800L_TURN_OFF_MS);
+		GPIO_DRV_ClearPinOutput(GPIO_PTC8);
+	}
+	OSA_TimeDelay(9000);
+
+	CONSOLE_SEND("TURNING ON...\r\n",15);
+	/*Turn On*/
+	GPIO_DRV_ClearPinOutput(GPIO_PTC8);
+	OSA_TimeDelay(2000);
+	GPIO_DRV_SetPinOutput(GPIO_PTC8);
+	OSA_TimeDelay(SIM800L_TURN_OFF_MS);
+	GPIO_DRV_ClearPinOutput(GPIO_PTC8);
+	OSA_TimeDelay(SIM800L_WAIT_FOR_NETWORK_MS);
+	SIM800L_FLUSH_RX_BUFFER();
+
 }
 
 void SIM800L_DEINIT()
@@ -57,7 +83,12 @@ void SIM800L_DEINIT()
 	CONSOLE_SEND("TURNING OFF SIM800L...\r\n",24);
 	GPIO_DRV_ClearPinOutput(GPIO_PTC8);
 	OSA_TimeDelay(2000);
+	GPIO_DRV_SetPinOutput(GPIO_PTC8);
+	OSA_TimeDelay(SIM800L_TURN_OFF_MS);
+	GPIO_DRV_ClearPinOutput(GPIO_PTC8);
+	OSA_TimeDelay(SIM800L_TURN_OFF_MS);
 	UART_DRV_Deinit(UART_1_IDX);
+
 }
 
 void SIM800L_FLUSH_RX_BUFFER()
@@ -439,12 +470,12 @@ uint8_t SIM800L_GET_BATTERY_VOLTAGE_MV()
 			}
 			else
 			{
-				CONSOLE_SEND(COMMAND_ERROR,strlen(COMMAND_ERROR));
+				CONSOLE_SEND("CANT GET BATTERY VOLTAJE\r\n",26);
 			}
 		}
 		else
 		{
-			CONSOLE_SEND(COMMAND_ERROR,strlen(COMMAND_ERROR));
+			CONSOLE_SEND("CANT GET BATTERY VOLTAJE\r\n",26);
 		}
 	}
 	else
@@ -508,12 +539,12 @@ uint8_t SIM800L_GET_BATTERY_PERCENTAGE()
 		}
 		else
 		{
-			CONSOLE_SEND(COMMAND_ERROR,strlen(COMMAND_ERROR));
+			CONSOLE_SEND("CANT GET BATTERY PERCENTAGE\r\n",29);
 		}
 	}
 	else
 	{
-		CONSOLE_SEND(COMMAND_ERROR,strlen(COMMAND_ERROR));
+		CONSOLE_SEND("CANT GET BATTERY PERCENTAGE\r\n",29);
 	}
 
 	SIM800L_FLUSH_RX_BUFFER();
@@ -556,7 +587,7 @@ uint8_t SIM800L_GET_IMEI()
 			}
 			else
 			{
-				CONSOLE_SEND(COMMAND_ERROR,strlen(COMMAND_ERROR));
+				CONSOLE_SEND("CANT GET IMEI\r\n",15);
 			}
 		}
 	}
@@ -600,7 +631,7 @@ uint8_t SIM800L_GET_IP()
 	}
 	else
 	{
-		CONSOLE_SEND(COMMAND_ERROR,strlen(COMMAND_ERROR));
+		CONSOLE_SEND("CANT GET IP\r\n",13);
 	}
 
 	SIM800L_FLUSH_RX_BUFFER();
@@ -639,7 +670,7 @@ uint8_t SIM800L_GET_SIGNAL_QUALITY()
 		}
 		else
 		{
-			CONSOLE_SEND(COMMAND_ERROR,strlen(COMMAND_ERROR));
+			CONSOLE_SEND("CANT GET SIGNAL QUALITY\r\n",25);
 		}
 
 		SIM800L_FLUSH_RX_BUFFER();
@@ -807,6 +838,7 @@ uint8_t SIM800L_FIND_WORD_IN_BUFFER(uint8_t *word, uint32_t wordSize)
 		}
 	}
 	return ok;
+
 }
 
 uint8_t SIM800L_CHECK_STATUS()
