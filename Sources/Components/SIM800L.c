@@ -22,8 +22,8 @@
  *		  Arduino RX Pin (Pin 0): UART1_RX = PTE0 = J2_18
  *		  Arduino TX Pin (Pin 1): UART1_TX = PTE1 = J2_20
  *		  Arduino D9 Pin (PWRKEY): PTC8
- *		  iComBoard jumpers must be connected like figure 5 in the datasheet.
- *		  	TXD to D1 and RXD to D0
+ *		  iComBoard jumpers connection: RXD to D2 and TXD to D3
+ *
  *
  *
  */
