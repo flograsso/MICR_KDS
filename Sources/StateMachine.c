@@ -589,7 +589,14 @@ SIM800L_error_t SEND_DATA_GPRS_TASK(message_t messageType, uint32_t *distanceSam
 	}
 	return exitCode;
 }
-
+void Init(){
+	CONSOLE_INIT();
+	MB7360_CALIBRATE();
+	/*Clear the EZ1-RX pin*/
+	GPIO_DRV_ClearPinOutput(GPIO_PTC9);
+	/*Clear the SIM900-PWRKEY pin*/
+	GPIO_DRV_ClearPinOutput(GPIO_PTC8);
+}
 void Application()
 {
 	uint32_t minutes=0, hours=0, samples=0, arrayIndex=0;
@@ -604,6 +611,7 @@ void Application()
 	static MMA8451_state_t boardState;
 	uint8_t fullAlarmSent = 0, fireAlarmSent = 0, fallAlarmSent = 0;
 
+	Init();
 
 	while(1)
 	{
@@ -618,7 +626,7 @@ void Application()
 				LPTMR_DRV_SetTimerPeriodUs(LPTMR_0_IDX,LPTMR_INTERRUPT_PERIOD_US);
 				LPTMR_DRV_Start(LPTMR_0_IDX);
 
-				CONSOLE_INIT();
+
 				CONSOLE_SEND("TO IDLE...\r\n",12);
 
 				/*TURN OFF BLUE LED*/

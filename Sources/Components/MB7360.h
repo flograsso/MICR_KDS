@@ -58,6 +58,19 @@ typedef struct{
 
 }mb7360_t;
 
+
+/**
+ *
+ * This method calibrates the EZ1 with the first read cycle
+ * It is important that objects not be close to the sensor during this calibration cycle.
+ * The best sensitivity is obtained when the detection area is clear for fourteen inches,
+ * but good results are common when clear for at least seven inches
+ *
+ * @author Federico Lo Grasso
+ *
+ */
+void MB7360_CALIBRATE();
+
 /**
  *
  * This method initializes the ADC0 and calibrates it with the following properties:

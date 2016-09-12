@@ -105,6 +105,16 @@ typedef enum
 	FALL_ALARM
 }
 message_t;
+
+/**
+ *
+ * This method initialize the Console and the Distance Sensor
+ * @author Federico Lo Grasso
+ * @return void
+ *
+ */
+void Init();
+
 /**
  *
  * This method implements the infinit loop of the state machine
