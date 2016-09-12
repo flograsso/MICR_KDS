@@ -211,6 +211,7 @@ void RECEIVE_CONFIG_TASK(uint32_t *sendPeriodHours,uint32_t *samplesPerHour, uin
 SIM800L_error_t SEND_DATA_SMS_TASK(message_t messageType, uint32_t *distanceSamplesArray, uint32_t samplesNumber)
 {
 	uint32_t reboots = 0;
+	uint32_t partialReboots = 0;
 	uint32_t errors_network = 0;
 	uint32_t errors_ready_to_send = 0;
 	uint32_t errors_send = 0;
@@ -229,7 +230,10 @@ SIM800L_error_t SEND_DATA_SMS_TASK(message_t messageType, uint32_t *distanceSamp
 				SIM800L_INIT();
 				state = CHECK_STATUS_SIM800L;
 				break;
-
+			case RESET_SIM800L:
+				SIM800L_RESET();
+				state = CHECK_STATUS_SIM800L;
+				break;
 			case CHECK_STATUS_SIM800L:
 				if (SIM800L_CHECK_STATUS())
 				{
@@ -248,7 +252,8 @@ SIM800L_error_t SEND_DATA_SMS_TASK(message_t messageType, uint32_t *distanceSamp
 						}
 						else
 						{
-							state = INIT_SIM800L;
+							state = RESET_SIM800L;
+							reboots++;
 						}
 					}
 				}
@@ -272,7 +277,7 @@ SIM800L_error_t SEND_DATA_SMS_TASK(message_t messageType, uint32_t *distanceSamp
 						}
 						else
 						{
-							state = INIT_SIM800L;
+							state =CHECK_STATUS_SIM800L;
 						}
 					}
 				}
@@ -310,14 +315,15 @@ SIM800L_error_t SEND_DATA_SMS_TASK(message_t messageType, uint32_t *distanceSamp
 					if(++errors_ready_to_send == TRY_TO_SEND_MAX_RETRIES)
 					{
 						errors_ready_to_send = 0;
-						if(reboots >= SIM800L_MAX_PARTIAL_REBOOTS )
+						if(partialReboots >= SIM800L_MAX_PARTIAL_REBOOTS )
 						{
 							exitCode = SIM800L_CANT_SEND_SMS;
 							state = TURN_OFF_SIM800L;
 						}
 						else
 						{
-							state = INIT_SIM800L;
+							state = CHECK_STATUS_SIM800L;
+							partialReboots++;
 						}
 					}
 				}
@@ -335,8 +341,7 @@ SIM800L_error_t SEND_DATA_SMS_TASK(message_t messageType, uint32_t *distanceSamp
 					if(++errors_send == SEND_MAX_RETRIES)
 					{
 						errors_send = 0;
-						send_retries ++;
-						if((reboots >= SIM800L_MAX_PARTIAL_REBOOTS ) || (send_retries = SEND_TOTAL_RETRIES))
+						if((partialReboots >= SIM800L_MAX_PARTIAL_REBOOTS ))
 						{
 							exitCode = SIM800L_CANT_SEND_SMS;
 							state = TURN_OFF_SIM800L;
@@ -344,6 +349,7 @@ SIM800L_error_t SEND_DATA_SMS_TASK(message_t messageType, uint32_t *distanceSamp
 						else
 						{
 							state = TRY_TO_SEND;
+							partialReboots++;
 						}
 					}
 				}
@@ -504,7 +510,7 @@ SIM800L_error_t SEND_DATA_GPRS_TASK(message_t messageType, uint32_t *distanceSam
 						errors_ready_to_send = 0;
 						if(partialReboots >= SIM800L_MAX_PARTIAL_REBOOTS )
 						{
-							exitCode = SIM800L_CANT_SEND_TO_SERVER;
+							exitCode = SIM800L_CANT_CONNECT_SERVER;
 							state = TURN_OFF_SIM800L;
 						}
 						else
@@ -769,6 +775,9 @@ void Application()
 						 break;
 
 					case SIM800L_NO_GPRS:
+					case SIM800L_CANT_SEND_TO_SERVER:
+					case SIM800L_CANT_CONNECT_SERVER:
+						CONSOLE_SEND("TRYING TO SEND SMS\r\n",20);
 						switch( exitCode = SEND_DATA_SMS_TASK(messageType, distanceSamplesArray,sendPeriodHours))
 						{
 							case SIM800L_SUCCESS_SMS:
