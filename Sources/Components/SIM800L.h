@@ -99,12 +99,18 @@
  * @brief MAX RETRIES FOR PREPARING SIM800L FOR SENDING SMS
  *
  */
+
 #define PREPARE_FOR_SMS_MAX_RETRIES 3
 
 /**
  * @brief Struct for SIM800L properties
  *
  */
+/**
+ * @brief Max reset retries
+ *
+ */
+#define RESET_MAX_RETRIES	2
 typedef struct{
 
 	uint8_t  UART1_RxBuffer[SIM800L_RX_BUFFER_SIZE];
@@ -215,7 +221,7 @@ const char *SERVER_CESPI = "163.10.181.17";
 
 const char *AT_CSCS_GSM="AT+CSCS=\"GSM\"\r\n";
 const char *AT_CMGF_1="AT+CMGF=1\r\n";
-const char *AT_CMGS= "AT+CMGS=2215732981\r\n";
+const char *AT_CMGS= "AT+CMGS=\"+542215732981\"\r\n";
 /**
  * @brief String returned when command fails
  *
@@ -340,12 +346,23 @@ uint8_t SIM800L_IS_ECHO_DISABLED();
 uint8_t SIM800L_IS_RESPONDING();
 /**
  *
+ * This method sends command "AT" to SIM800L and checks if it returns OK
+ * Doesn't show response
+ *
+ * @author Valentin Korenblit
+ * @return 1 if success or 0 if command failed
+ *
+ */
+uint8_t SIM800L_IS_RESPONDING_NO_ECHO();
+/**
+ *
  * This method checks if the SIM inserted in SIM800L is ready to work: AT+CPIN?
  *
  * @author Valentin Korenblit
  * @return 1 if success or 0 if command failed
  *
  */
+
 uint8_t SIM800L_IS_SIM_READY();
 /**
  *

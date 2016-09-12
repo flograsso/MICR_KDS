@@ -902,7 +902,7 @@
     </GenFiles>
     <SignalListFile />
     <DestinationCompiler>GNUC</DestinationCompiler>
-    <ProjectModificationStamp>98</ProjectModificationStamp>
+    <ProjectModificationStamp>99</ProjectModificationStamp>
   </Options>
   <CpuID_1>
     <Generated>true</Generated>

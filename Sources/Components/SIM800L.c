@@ -34,6 +34,7 @@ SIM800L_t SIM800L;
 
 void SIM800L_INIT()
 {
+	uint8_t retries = 0;
 	SIM800L.UART1_RxBuffer_Index=0;
 	SIM800L.Sim_Ready=0;
 	SIM800L.Active=0;
@@ -44,16 +45,22 @@ void SIM800L_INIT()
 	UART_DRV_InstallRxCallback(UART_1_IDX,UART_1_RxCallback,&(SIM800L.UART1_RxByte),NULL,true);
 
 	/*HARD RESET*/
-	GPIO_DRV_ClearPinOutput(GPIO_PTC8);
-	OSA_TimeDelay(2000);
-	GPIO_DRV_SetPinOutput(GPIO_PTC8);
-	OSA_TimeDelay(SIM800L_TURN_OFF_MS);
-	GPIO_DRV_ClearPinOutput(GPIO_PTC8);
-	OSA_TimeDelay(SIM800L_WAIT_FOR_NETWORK_MS);
+	do{
+		GPIO_DRV_ClearPinOutput(GPIO_PTC8);
+		OSA_TimeDelay(2000);
+		GPIO_DRV_SetPinOutput(GPIO_PTC8);
+		OSA_TimeDelay(SIM800L_TURN_OFF_MS);
+		GPIO_DRV_ClearPinOutput(GPIO_PTC8);
+		OSA_TimeDelay(SIM800L_WAIT_FOR_NETWORK_MS);
+		retries++;
+	}
+	while (!SIM800L_IS_RESPONDING_NO_ECHO() && retries <= RESET_MAX_RETRIES);
 	SIM800L_FLUSH_RX_BUFFER();
 }
 
 void SIM800L_RESET(){
+
+	uint8_t retries = 0;
 	CONSOLE_SEND("RESETTING SIM800L...\r\n",22);
 
 	/*Turn OFF*/
@@ -67,25 +74,33 @@ void SIM800L_RESET(){
 	OSA_TimeDelay(9000);
 
 	CONSOLE_SEND("TURNING ON...\r\n",15);
-	/*Turn On*/
-	GPIO_DRV_ClearPinOutput(GPIO_PTC8);
-	OSA_TimeDelay(2000);
-	GPIO_DRV_SetPinOutput(GPIO_PTC8);
-	OSA_TimeDelay(SIM800L_TURN_OFF_MS);
-	GPIO_DRV_ClearPinOutput(GPIO_PTC8);
-	OSA_TimeDelay(SIM800L_WAIT_FOR_NETWORK_MS);
-	SIM800L_FLUSH_RX_BUFFER();
 
+	/*Turn On*/
+	do{
+		GPIO_DRV_ClearPinOutput(GPIO_PTC8);
+		OSA_TimeDelay(2000);
+		GPIO_DRV_SetPinOutput(GPIO_PTC8);
+		OSA_TimeDelay(SIM800L_TURN_OFF_MS);
+		GPIO_DRV_ClearPinOutput(GPIO_PTC8);
+		OSA_TimeDelay(SIM800L_WAIT_FOR_NETWORK_MS);
+		retries++;
+	}
+	while (!SIM800L_IS_RESPONDING_NO_ECHO() && retries <= RESET_MAX_RETRIES);
+
+	SIM800L_FLUSH_RX_BUFFER();
 }
 
 void SIM800L_DEINIT()
 {
 	CONSOLE_SEND("TURNING OFF SIM800L...\r\n",24);
-	GPIO_DRV_ClearPinOutput(GPIO_PTC8);
-	OSA_TimeDelay(2000);
-	GPIO_DRV_SetPinOutput(GPIO_PTC8);
-	OSA_TimeDelay(SIM800L_TURN_OFF_MS);
-	GPIO_DRV_ClearPinOutput(GPIO_PTC8);
+	if(!SIM800L_POWER_DOWN_SOFTWARE()){
+		GPIO_DRV_ClearPinOutput(GPIO_PTC8);
+		OSA_TimeDelay(2000);
+		GPIO_DRV_SetPinOutput(GPIO_PTC8);
+		OSA_TimeDelay(SIM800L_TURN_OFF_MS);
+		GPIO_DRV_ClearPinOutput(GPIO_PTC8);
+		OSA_TimeDelay(SIM800L_TURN_OFF_MS);
+	}
 	OSA_TimeDelay(SIM800L_TURN_OFF_MS);
 	UART_DRV_Deinit(UART_1_IDX);
 
@@ -695,6 +710,23 @@ uint8_t SIM800L_IS_RESPONDING()
 	{
 		SIM800L.Active=0;
 		CONSOLE_SEND("SIM800L IS NOT RESPONDING\r\n",26);
+	}
+
+	SIM800L_FLUSH_RX_BUFFER();
+	return ok;
+}
+
+uint8_t SIM800L_IS_RESPONDING_NO_ECHO()
+{
+	uint8_t *word="OK";
+	uint8_t ok=0;
+
+	SIM800L_SEND_COMMAND(AT,strlen(AT));
+	OSA_TimeDelay(500);
+
+	if( SIM800L_FIND_WORD_IN_BUFFER(word,strlen(word)) )
+	{
+		ok=1;
 	}
 
 	SIM800L_FLUSH_RX_BUFFER();

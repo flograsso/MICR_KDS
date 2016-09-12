@@ -55,7 +55,7 @@
  * @brief Distance when container is full. MB7360 returns 400mm if object is 400mm or nearer to the sensor.
  *
  */
-#define	DISTANCE_THRESHOLD				400
+#define	DISTANCE_THRESHOLD	400
 /**
  * @brief When MB7360 reading fails, it returns máx value: 4995mm
  *
@@ -76,6 +76,8 @@
  *
  */
 #define SEND_MAX_FAILURES	5
+
+
 /**
  * @brief State machine possible states
  *
