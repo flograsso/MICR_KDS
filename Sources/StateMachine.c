@@ -31,7 +31,7 @@ void CREATE_SMS_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSamples
 		buffer[i] = '\0';
 	}
 
-	sprintf(buffer,"imei=%s\nbattery_voltage=%s\nbattery_percentage=%s\ntemperature=%s\nsignal_strength=%s\nsamples_number=%d",
+	sprintf(buffer,"imei=%s\nbattery_voltage=%s\nbattery_percentage=%s\ntemperature=%s\nsignal_strength=%s\nsamples_number=%d\r\n\r\n\x1A",
 			SIM800L.Imei,
 			SIM800L.BatteryVoltageMv,
 			SIM800L.BatteryPercentage,
@@ -58,7 +58,7 @@ void CREATE_SMS_ALERT(uint8_t *buffer,uint32_t size,message_t messageType)
 	}
 
 
-	sprintf(buffer,"imei=%s\nbattery_voltage=%s\nbattery_percentage=%s\ntemperature=%s\nsignal_strength=%s\nsamples_number=1\nsample0=%s\nmessage_type=%s",
+	sprintf(buffer,"imei=%s&battery_voltage=%s&battery_percentage=%s&temperature=%s&signal_strength=%s&samples_number=1&sample0=%s&message_type=%s\r\n\r\n\x1A",
 			SIM800L.Imei,
 			SIM800L.BatteryVoltageMv,
 			SIM800L.BatteryPercentage,
@@ -540,7 +540,7 @@ SIM800L_error_t SEND_DATA_GPRS_TASK(message_t messageType, uint32_t *distanceSam
 						}
 						else
 						{
-							state = TRY_TO_SEND;
+							state = ESTABLISH_TCP_CONNECTION;
 							partialReboots++;
 						}
 					}
@@ -753,7 +753,7 @@ void Application()
 				break;
 
 			case SEND_DATA:
-				switch( exitCode = SEND_DATA_GPRS_TASK(messageType, distanceSamplesArray,sendPeriodHours) )
+				switch(exitCode = SEND_DATA_GPRS_TASK(messageType, distanceSamplesArray,sendPeriodHours) )
 				{
 					case SIM800L_SUCCESS_GPRS:
 						switch(messageType)
