@@ -7,7 +7,7 @@
 **     Version     : Component 1.2.0, Driver 1.4, CPU db: 3.00.000
 **     Repository  : KSDK 1.3.0
 **     Compiler    : GNU C Compiler
-**     Date/Time   : 2016-06-15, 11:08, # CodeGen: 0
+**     Date/Time   : 2016-09-13, 14:09, # CodeGen: 39
 **     Abstract    :
 **
 **     Settings    :
@@ -414,7 +414,7 @@
 **              Peripheral Type UART0                      : 
 **                Custom name                              : UART0
 **                UART0                                    : 
-**                  RX - Receive data                      : <Automatic>
+**                  RX - Receive data                      : DBG_CONSOLE_RX/J1_2
 **                  TX - Transmit data                     : <Automatic>
 **                Bool_UART0                               : yes
 **              Peripheral Type USB                        : 
@@ -566,14 +566,14 @@
 **                Drive strength                           : <Automatic>
 **                Passive filter                           : <Automatic>
 **                Pull select                              : <Automatic>
-**                Pull enable                              : <Automatic>
+**                Pull enable                              : Enabled
 **              Pin 28: TSI0_CH3/PTA2/UART0_TX/TPM2_CH1    : 
 **                Custom name, Signal name                 : DBG_CONSOLE_TX/J1_4
 **                Slew rate                                : <Automatic>
 **                Drive strength                           : <Automatic>
 **                Passive filter                           : <Automatic>
-**                Pull select                              : <Automatic>
-**                Pull enable                              : <Automatic>
+**                Pull select                              : Pullup
+**                Pull enable                              : Enabled
 **              Pin 29: TSI0_CH4/PTA3/I2C1_SCL/TPM0_CH0/SWD_DIO: 
 **                Custom name, Signal name                 : SWD_DIO
 **                Slew rate                                : <Automatic>
@@ -1317,9 +1317,11 @@ void init_uart0_pins(uint32_t instance)
 {
   /* Affects PORTA_PCR1 register */
   PORT_HAL_SetMuxMode(PORTA,1UL,kPortMuxAlt2);
+  PORT_HAL_SetPullCmd(PORTA,1UL,true);
   SIM_HAL_SetLpsciRxSrcMode(SIM,UART0_IDX,kSimLpsciRxsrcPin);
   /* Affects PORTA_PCR2 register */
   PORT_HAL_SetMuxMode(PORTA,2UL,kPortMuxAlt2);
+  PORT_HAL_SetPullCmd(PORTA,2UL,true);
 }
 /*FUNCTION**********************************************************************
 *

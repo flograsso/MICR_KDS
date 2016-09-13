@@ -3,7 +3,7 @@
   <Header>
     <Name>MICR_KDS</Name>
     <SavedBy>Valentin</SavedBy>
-    <ModificationStamp>99</ModificationStamp>
+    <ModificationStamp>100</ModificationStamp>
     <Date>2016-02-23</Date>
     <IDE>Eclipse IDE</IDE>
     <PEversion>1.12.2.RT7_b1550-0615</PEversion>
@@ -13469,7 +13469,7 @@
         <ItemSymbol>UART0_uart_rx</ItemSymbol>
         <ReadOnly>false</ReadOnly>
         <UserReadOnly>false</UserReadOnly>
-        <Value>&lt;Automatic&gt;</Value>
+        <Value>DBG_CONSOLE_RX/J1_2</Value>
         <SharedPrphMode>false</SharedPrphMode>
       </ItemState>
       <ItemState>
@@ -14448,8 +14448,8 @@
         <ItemSymbol>TSI0_CH2_PTA1_UART0_RX_TPM2_CH0_pull_enable</ItemSymbol>
         <ReadOnly>false</ReadOnly>
         <UserReadOnly>false</UserReadOnly>
-        <Value>&lt;Automatic&gt;</Value>
-        <PinFuncPropStateId>&lt;Automatic&gt;</PinFuncPropStateId>
+        <Value>Enabled</Value>
+        <PinFuncPropStateId>enable</PinFuncPropStateId>
       </ItemState>
       <ItemState>
         <ItemSymbol>TSI0_CH3_PTA2_UART0_TX_TPM2_CH1</ItemSymbol>
@@ -14488,15 +14488,15 @@
         <ItemSymbol>TSI0_CH3_PTA2_UART0_TX_TPM2_CH1_pull_select</ItemSymbol>
         <ReadOnly>false</ReadOnly>
         <UserReadOnly>false</UserReadOnly>
-        <Value>&lt;Automatic&gt;</Value>
-        <PinFuncPropStateId>&lt;Automatic&gt;</PinFuncPropStateId>
+        <Value>Pullup</Value>
+        <PinFuncPropStateId>up</PinFuncPropStateId>
       </ItemState>
       <ItemState>
         <ItemSymbol>TSI0_CH3_PTA2_UART0_TX_TPM2_CH1_pull_enable</ItemSymbol>
         <ReadOnly>false</ReadOnly>
         <UserReadOnly>false</UserReadOnly>
-        <Value>&lt;Automatic&gt;</Value>
-        <PinFuncPropStateId>&lt;Automatic&gt;</PinFuncPropStateId>
+        <Value>Enabled</Value>
+        <PinFuncPropStateId>enable</PinFuncPropStateId>
       </ItemState>
       <ItemState>
         <ItemSymbol>TSI0_CH4_PTA3_I2C1_SCL_TPM0_CH0_SWD_DIO</ItemSymbol>
