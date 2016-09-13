@@ -53,8 +53,9 @@ void SIM800L_INIT()
 		GPIO_DRV_ClearPinOutput(GPIO_PTC8);
 		OSA_TimeDelay(SIM800L_WAIT_FOR_NETWORK_MS);
 		retries++;
+
 	}
-	while (!SIM800L_IS_RESPONDING_NO_ECHO() && retries <= RESET_MAX_RETRIES);
+	while (!SIM800L_IS_RESPONDING_NO_ECHO() && (retries <= RESET_MAX_RETRIES));
 	SIM800L_FLUSH_RX_BUFFER();
 }
 
@@ -85,7 +86,7 @@ void SIM800L_RESET(){
 		OSA_TimeDelay(SIM800L_WAIT_FOR_NETWORK_MS);
 		retries++;
 	}
-	while (!SIM800L_IS_RESPONDING_NO_ECHO() && retries <= RESET_MAX_RETRIES);
+	while (!SIM800L_IS_RESPONDING_NO_ECHO() && (retries <= RESET_MAX_RETRIES));
 
 	SIM800L_FLUSH_RX_BUFFER();
 }
@@ -197,12 +198,10 @@ uint8_t SIM800L_IS_READY_TO_SEND_SMS()
 uint8_t SIM800L_SMS_SEND(uint8_t *buffer)
 {
 	uint8_t ok=0;
-	uint8_t *word="SEND OK";
-	uint8_t *word2="SEND FAIL";
+	uint8_t *word="OK";
 
 	SIM800L_SEND_COMMAND(buffer,strlen(buffer));
 	OSA_TimeDelay(8000);
-
 	if(SIM800L_FIND_WORD_IN_BUFFER(word,strlen(word)) )
 	{
 		ok=1;

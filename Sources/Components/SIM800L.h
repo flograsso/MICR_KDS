@@ -221,7 +221,7 @@ const char *SERVER_CESPI = "163.10.181.17";
 
 const char *AT_CSCS_GSM="AT+CSCS=\"GSM\"\r\n";
 const char *AT_CMGF_1="AT+CMGF=1\r\n";
-const char *AT_CMGS= "AT+CMGS=\"+542215732981\"\r\n";
+const char *AT_CMGS= "AT+CMGS=\"2215732981\"\r\n";
 /**
  * @brief String returned when command fails
  *
