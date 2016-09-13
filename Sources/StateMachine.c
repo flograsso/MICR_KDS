@@ -164,7 +164,6 @@ void RECEIVE_CONFIG_TASK(uint32_t *sendPeriodHours,uint32_t *samplesPerHour, uin
 	CONSOLE_RECEIVE(&CONSOLE_BUFFER_1,1);
 	LPTMR_DRV_Stop(LPTMR_0_IDX);
 	if(Console.configFlag==0){
-
 		receivedData = atoi(&CONSOLE_BUFFER_1);
 		while( (receivedData == 0) || (receivedData > MAX_ALLOWED_SEND_PERIOD_HOURS))
 		{
@@ -611,21 +610,22 @@ void Application()
 	static MMA8451_state_t boardState;
 	uint8_t fullAlarmSent = 0, fireAlarmSent = 0, fallAlarmSent = 0;
 
-	Init();
+
 
 	while(1)
 	{
 		switch(currentState)
 		{
 			case RECEIVE_CONFIG:
+				Init();
 				RECEIVE_CONFIG_TASK(&sendPeriodHours,&samplesPerHour,&minutesLeaveIdle);
+
 				currentState = IDLE;
 				break;
 
 			case IDLE:
 				LPTMR_DRV_SetTimerPeriodUs(LPTMR_0_IDX,LPTMR_INTERRUPT_PERIOD_US);
 				LPTMR_DRV_Start(LPTMR_0_IDX);
-
 
 				CONSOLE_SEND("TO IDLE...\r\n",12);
 
