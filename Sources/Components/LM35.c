@@ -6,9 +6,9 @@
  * @date March, 2016
  * @brief Driver for TMP36GZ temperature sensor
  * 		  The driver works reading analog voltage input
- * 		  Uses ADC0-SE12
+ * 		  Uses ADC0-SE9
  * 		  PIN 1: Vcc (2.7 to 5.5V)
- * 		  PIN 2: Analog Voltage Output: connect this pin to ADC0_SE12 = PTB2 = J10_6 OF FRDM-KL25Z
+ * 		  PIN 2: Analog Voltage Output: connect this pin to ADC0_SE9 = PTB1
  * 		  PIN 3: Gnd: connect this pin to Ground
  *
  *
