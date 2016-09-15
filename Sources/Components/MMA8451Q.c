@@ -84,17 +84,18 @@ MMA8451_state_t MMA8451_GET_STATE(MMA8451_orientation_t orientation)
 	MMA8451Q_GET_DATA();
 	MMA8451_state_t exitCode;
 
-	if(orientation == MMA8451_VERTICAL)
+	if(orientation == MMA8451_HORIZONTAL)
 	{
-		if( (Mma8451q.xData > MMA8451_X_AXIS_VERTICAL_OK) && (Mma8451q.yData < MMA8451_Y_AXIS_VERTICAL_OK))
+		if(Mma8451q.yAngle > MMA8451_Y_ANGLE_HORIZONTAL_OK)
 		{
-			exitCode = MMA8451_OK;
+			exitCode =MMA8451_FALL ;
 		}
 		else
 		{
-			exitCode = MMA8451_FALL;
+			exitCode = MMA8451_OK;
 		}
 	}
+
 	return exitCode;
 }
 
