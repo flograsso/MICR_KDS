@@ -176,7 +176,7 @@
 			<tr bgcolor='#969696'><td>non-peripheral</td><td>NMI</td><td>alt7</td><td>Not Specified</td></tr>
 			<tr>
 				<td>31</td><td>PTA5/USB_CLKIN/TPM0_CH2</td><td>J1_12</td>
-				<td></td><td></td><td></td><td></td>
+				<td bgcolor='#F7DCFF'>GPIOA</td><td bgcolor='#F7DCFF'>port5</td><td bgcolor='#F7DCFF'>alt1</td><td bgcolor='#F7DCFF'>Output</td>
 			</tr>
 			<tr>
 				<td>32</td><td>PTA12/TPM1_CH0</td><td>J1_8</td>
@@ -1463,7 +1463,7 @@
 			<tr bgcolor='#969696'><td>non-peripheral</td><td>NMI</td><td>alt7</td><td>Not Specified</td></tr>
 			<tr>
 				<td>31</td><td>PTA5/USB_CLKIN/TPM0_CH2</td><td>J1_12</td>
-				<td></td><td></td><td></td><td></td>
+				<td bgcolor='#F7DCFF'>GPIOA</td><td bgcolor='#F7DCFF'>port5</td><td bgcolor='#F7DCFF'>alt1</td><td bgcolor='#F7DCFF'>Output</td>
 			</tr>
 			<tr>
 				<td>32</td><td>PTA12/TPM1_CH0</td><td>J1_8</td>

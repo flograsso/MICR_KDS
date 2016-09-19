@@ -58,7 +58,7 @@ void CREATE_SMS_ALERT(uint8_t *buffer,uint32_t size,message_t messageType)
 	}
 
 
-	sprintf(buffer,"imei=%s&battery_voltage=%s&battery_percentage=%s&temperature=%s&signal_strength=%s&samples_number=1&sample0=%s&message_type=%s\r\n\r\n\x1A",
+	sprintf(buffer,"imei=%s\nbattery_voltage=%s\nbattery_percentage=%s\ntemperature=%s\nsignal_strength=%s\nsamples_number=1&sample0=%s\nmessage_type=%s\r\n\r\n\x1A",
 			SIM800L.Imei,
 			SIM800L.BatteryVoltageMv,
 			SIM800L.BatteryPercentage,
@@ -514,7 +514,7 @@ SIM800L_error_t SEND_DATA_GPRS_TASK(message_t messageType, uint32_t *distanceSam
 						}
 						else
 						{
-							state = ESTABLISH_TCP_CONNECTION;
+							state = CONNECT_GPRS;
 							partialReboots++;
 						}
 					}
@@ -673,6 +673,7 @@ void Application()
 				{
 					if(!fallAlarmSent)
 					{
+						CONSOLE_SEND("FALL ALARM\r\n",12);
 						messageType = FALL_ALARM;
 						currentState = SEND_DATA;
 					}

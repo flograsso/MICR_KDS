@@ -35,7 +35,7 @@
  * @brief Time for LPTMR config timeout interrupt in microseconds
  *
  */
-#define LPTMR_CONFIG_TIMEOUT_INTERRUPT_PERIOD_US		10000000 /*10 SEC*/
+#define LPTMR_CONFIG_TIMEOUT_INTERRUPT_PERIOD_US		20000000 /*20 SEC*/
 
 /**
  * @brief Time for LPTMR interrupt in microseconds
