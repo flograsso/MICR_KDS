@@ -7,7 +7,7 @@
 **     Version     : Component 1.2.0, Driver 1.4, CPU db: 3.00.000
 **     Repository  : KSDK 1.3.0
 **     Compiler    : GNU C Compiler
-**     Date/Time   : 2016-09-13, 14:09, # CodeGen: 39
+**     Date/Time   : 2016-09-14, 13:25, # CodeGen: 45
 **     Abstract    :
 **
 **     Settings    :
@@ -440,8 +440,8 @@
 **                Slew rate                                : <Automatic>
 **                Drive strength                           : <Automatic>
 **                Passive filter                           : <Automatic>
-**                Pull select                              : <Automatic>
-**                Pull enable                              : <Automatic>
+**                Pull select                              : Pullup
+**                Pull enable                              : Enabled
 **              Pin 3: PTE2/SPI1_SCK                       : 
 **                Custom name, Signal name                 : J9_9
 **                Slew rate                                : <Automatic>

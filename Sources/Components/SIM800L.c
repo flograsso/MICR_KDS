@@ -64,7 +64,23 @@ void SIM800L_RESET(){
 	uint8_t retries = 0;
 	CONSOLE_SEND("RESETTING SIM800L...\r\n",22);
 
-	/*Turn OFF*/
+	GPIO_DRV_ClearPinOutput(GPIO_PTA5);
+	OSA_TimeDelay(2000);
+	GPIO_DRV_SetPinOutput(GPIO_PTA5);
+	OSA_TimeDelay(2000);
+	GPIO_DRV_ClearPinOutput(GPIO_PTA5);
+	OSA_TimeDelay(SIM800L_WAIT_FOR_NETWORK_MS);
+	while (!SIM800L_IS_RESPONDING_NO_ECHO() && (retries <= RESET_MAX_RETRIES)){
+		GPIO_DRV_ClearPinOutput(GPIO_PTC8);
+		OSA_TimeDelay(2000);
+		GPIO_DRV_SetPinOutput(GPIO_PTC8);
+		OSA_TimeDelay(SIM800L_TURN_OFF_MS);
+		GPIO_DRV_ClearPinOutput(GPIO_PTC8);
+		OSA_TimeDelay(SIM800L_WAIT_FOR_NETWORK_MS);
+		retries++;
+	}
+	/*
+	/*Turn OFF
 	if(!SIM800L_POWER_DOWN_SOFTWARE()){
 		GPIO_DRV_ClearPinOutput(GPIO_PTC8);
 		OSA_TimeDelay(2000);
@@ -72,11 +88,11 @@ void SIM800L_RESET(){
 		OSA_TimeDelay(SIM800L_TURN_OFF_MS);
 		GPIO_DRV_ClearPinOutput(GPIO_PTC8);
 	}
-	OSA_TimeDelay(9000);
+	OSA_TimeDelay(12000);
 
 	CONSOLE_SEND("TURNING ON...\r\n",15);
 
-	/*Turn On*/
+	/*Turn On
 	do{
 		GPIO_DRV_ClearPinOutput(GPIO_PTC8);
 		OSA_TimeDelay(2000);
@@ -87,6 +103,7 @@ void SIM800L_RESET(){
 		retries++;
 	}
 	while (!SIM800L_IS_RESPONDING_NO_ECHO() && (retries <= RESET_MAX_RETRIES));
+	*/
 
 	SIM800L_FLUSH_RX_BUFFER();
 }
@@ -173,28 +190,6 @@ uint8_t SIM800L_SELECT_SMS_FORMAT_TEXT()
 	return ok;
 }
 
-uint8_t SIM800L_IS_READY_TO_SEND_SMS()
-{
-	uint8_t ok=0;
-	uint8_t *word=">";
-
-	SIM800L_SEND_COMMAND(AT_CMGS,strlen(AT_CMGS));
-	OSA_TimeDelay(2000);
-
-	if(SIM800L_FIND_WORD_IN_BUFFER(word,strlen(word)) )
-	{
-		ok=1;
-		CONSOLE_SEND("SIM800L IS READY TO SEND SMS\r\n",29);
-	}
-	else
-	{
-		CONSOLE_SEND("SIM800L IS NOT READY TO SEND SMS\r\n",33);
-	}
-
-	SIM800L_FLUSH_RX_BUFFER();
-	return ok;
-}
-
 uint8_t SIM800L_SMS_SEND(uint8_t *buffer)
 {
 	uint8_t ok=0;
@@ -219,11 +214,11 @@ uint8_t SIM800L_SMS_SEND(uint8_t *buffer)
 uint8_t SIM800L_HTTP_SEND(uint8_t *buffer)
 {
 	uint8_t ok=0;
-	uint8_t *word="SEND OK";
+	uint8_t *word="OK";
 	uint8_t *word2="SEND FAIL";
 
 	SIM800L_SEND_COMMAND(buffer,strlen(buffer));
-	OSA_TimeDelay(5000);
+	OSA_TimeDelay(9000);
 
 	if(SIM800L_FIND_WORD_IN_BUFFER(word,strlen(word)) )
 	{
@@ -245,7 +240,7 @@ uint8_t SIM800L_IS_READY_TO_SEND()
 	uint8_t *word=">";
 
 	SIM800L_SEND_COMMAND(AT_CIPSEND,strlen(AT_CIPSEND));
-	OSA_TimeDelay(2000);
+	OSA_TimeDelay(3000);
 
 	if(SIM800L_FIND_WORD_IN_BUFFER(word,strlen(word)) )
 	{
@@ -264,10 +259,10 @@ uint8_t SIM800L_IS_READY_TO_SEND()
 uint8_t SIM800L_CIPSHUT()
 {
 	uint8_t ok=0;
-	uint8_t *word="SHUT OK";
+	uint8_t *word="OK";
 
 	SIM800L_SEND_COMMAND(AT_CIPSHUT,strlen(AT_CIPSHUT));
-	OSA_TimeDelay(1500);
+	OSA_TimeDelay(3000);
 
 	if(SIM800L_FIND_WORD_IN_BUFFER(word,strlen(word)) )
 	{
@@ -309,13 +304,12 @@ uint8_t SIM800L_ESTABLISH_TCP_CONNECTION()
 {
 	uint8_t ok=0;
 	uint8_t *word="CONNECT OK";
-	uint8_t *word2="ALREADY CONNECT";
+	uint8_t *word2="ALREADY";
 	uint8_t *word3="FAIL";
 
 	SIM800L_SEND_COMMAND(AT_CIPSTART_CESPI,strlen(AT_CIPSTART_CESPI));
 	OSA_TimeDelay(5000);
-
-	if(SIM800L_FIND_WORD_IN_BUFFER(word,strlen(word)))
+	if((SIM800L_FIND_WORD_IN_BUFFER(word,strlen(word)))||(SIM800L_FIND_WORD_IN_BUFFER(word2,strlen(word2))))
 	{
 		ok=1;
 		CONSOLE_SEND("TCP CONNECTION ESTABLISHED WITH: ",33);
@@ -331,6 +325,28 @@ uint8_t SIM800L_ESTABLISH_TCP_CONNECTION()
 	return ok;
 }
 
+uint8_t SIM800L_IS_READY_TO_SEND_SMS()
+{
+	uint8_t ok=0;
+	uint8_t *word=">";
+
+	SIM800L_SEND_COMMAND(AT_CMGS,strlen(AT_CMGS));
+	OSA_TimeDelay(2000);
+
+	if(SIM800L_FIND_WORD_IN_BUFFER(word,strlen(word)) )
+	{
+		ok=1;
+		CONSOLE_SEND("SIM800L IS READY TO SEND SMS\r\n",29);
+	}
+	else
+	{
+		CONSOLE_SEND("SIM800L IS NOT READY TO SEND SMS\r\n",33);
+	}
+
+	SIM800L_FLUSH_RX_BUFFER();
+	return ok;
+}
+
 uint8_t SIM800L_CLOSE_TCP_CONNECTION()
 {
 	uint8_t ok=0;
@@ -339,7 +355,7 @@ uint8_t SIM800L_CLOSE_TCP_CONNECTION()
 	SIM800L_SEND_COMMAND(AT_CIPCLOSE_1,strlen(AT_CIPCLOSE_1));
 	OSA_TimeDelay(3000);
 
-	if(SIM800L_FIND_WORD_IN_BUFFER(word,strlen(word)) )
+	if(SIM800L_FIND_WORD_IN_BUFFER(word,strlen(word)))
 	{
 		ok=1;
 		CONSOLE_SEND("TCP CONNECTION CLOSED\r\n",23);
@@ -360,7 +376,7 @@ uint8_t SIM800L_IS_ATTACHED_TO_GPRS()
 	uint8_t *word="1";
 
 	SIM800L_SEND_COMMAND(AT_CGATT,strlen(AT_CGATT));
-	OSA_TimeDelay(2000);
+	OSA_TimeDelay(6000);
 
 	if(SIM800L_FIND_WORD_IN_BUFFER(word,strlen(word)) )
 	{
@@ -382,7 +398,7 @@ uint8_t SIM800L_GPRS_ATTACHMENT_OK()
 	uint8_t *word="OK";
 
 	SIM800L_SEND_COMMAND(AT_CGATT_1,strlen(AT_CGATT_1));
-	OSA_TimeDelay(2000);
+	OSA_TimeDelay(3000);
 
 	if(SIM800L_FIND_WORD_IN_BUFFER(word,strlen(word)) )
 	{
@@ -824,11 +840,12 @@ uint8_t SIM800L_SET_MIN_FUNC()
 
 uint8_t SIM800L_POWER_DOWN_SOFTWARE()
 {
-	uint8_t *word="NORMAL POWER DOWN";
+	uint8_t *word="NORMAL";
 	uint8_t ok=0;
 
+	OSA_TimeDelay(2000);
 	SIM800L_SEND_COMMAND(AT_CPOWD_1,strlen(AT_CPOWD_1));
-	OSA_TimeDelay(3000);
+	OSA_TimeDelay(15000);
 
 	if( SIM800L_FIND_WORD_IN_BUFFER(word,strlen(word)) )
 	{
@@ -850,7 +867,7 @@ uint8_t SIM800L_FIND_WORD_IN_BUFFER(uint8_t *word, uint32_t wordSize)
 {
 	uint32_t indexBuffer=0,indexWord;
 	uint8_t ok=0;
-	while((SIM800L.UART1_RxBuffer[indexBuffer] != word[0]) && (indexBuffer < (SIM800L_RX_BUFFER_SIZE -1)) )
+	while((SIM800L.UART1_RxBuffer[indexBuffer] != word[0]) && (SIM800L.UART1_RxBuffer[indexBuffer] != '\0') && (indexBuffer < (SIM800L_RX_BUFFER_SIZE -1)) )
 	{
 				indexBuffer++;
 	}
@@ -924,11 +941,6 @@ uint8_t SIM800L_CONNECT_GPRS()
 {
 	uint8_t ok=1;
 
-	/*AT_CGATT=1*/
-	if (!SIM800L_GPRS_ATTACHMENT_OK())
-	{
-		ok=0;
-	}
 	/*AT+CIPSHUT*/
 	if (!SIM800L_CIPSHUT())
 	{
@@ -949,8 +961,11 @@ uint8_t SIM800L_CONNECT_GPRS()
 	{
 		ok=0;
 	}
-
-
+	/*AT_CGATT=1*/
+	if (!SIM800L_GPRS_ATTACHMENT_OK())
+	{
+		ok=0;
+	}
 
 	return ok;
 

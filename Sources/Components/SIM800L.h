@@ -53,7 +53,7 @@
  * @brief MAX ALLOWED PARTIAL REBOOTS BEFORE LEAVING
  *
  */
-#define SIM800L_MAX_PARTIAL_REBOOTS 5
+#define SIM800L_MAX_PARTIAL_REBOOTS 7
 
 /**
  * @brief MAX RETRIES FOR CHECKING NETWORK REGISTRATION
@@ -206,11 +206,8 @@ const char *AT_CIPCLOSE="AT+CIPCLOSE\r\n";
 const char *AT_CIPCLOSE_1="AT+CIPCLOSE=1\r\n";
 const char *AT_CIPSTATUS="AT+CIPSTATUS\r\n";
 const char *AT_CIPSEND="AT+CIPSEND\r\n";
-const char *AT_CIPSTART_GOOGLE="AT+CIPSTART=\"TCP\",\"www.google.com\",80\r\n";
 
-const char *AT_CIPSTART_SA="AT+CIPSTART=\"TCP\",\"sensoresambientales.xyz\",80\r\n";
-const char *SERVICE_ROUTE_SA = "/MICR/save_test.php";
-const char *SERVER_SA = "sensoresambientales.xyz";
+
 /**
  * @brief Start TCP connection with CESPI
  *

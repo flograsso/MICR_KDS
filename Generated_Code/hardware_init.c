@@ -7,7 +7,7 @@
 **     Version     : Component 1.2.0, Driver 1.4, CPU db: 3.00.000
 **     Repository  : KSDK 1.3.0
 **     Compiler    : GNU C Compiler
-**     Date/Time   : 2016-09-13, 14:09, # CodeGen: 39
+**     Date/Time   : 2016-09-15, 17:14, # CodeGen: 52
 **     Abstract    :
 **
 **     Settings    :
@@ -440,8 +440,8 @@
 **                Slew rate                                : <Automatic>
 **                Drive strength                           : <Automatic>
 **                Passive filter                           : <Automatic>
-**                Pull select                              : <Automatic>
-**                Pull enable                              : <Automatic>
+**                Pull select                              : Pullup
+**                Pull enable                              : Enabled
 **              Pin 3: PTE2/SPI1_SCK                       : 
 **                Custom name, Signal name                 : J9_9
 **                Slew rate                                : <Automatic>
@@ -977,15 +977,16 @@ void hardware_init(void) {
 
   /* Enable clock for PORTs */
   SIM_HAL_EnableClock(SIM,kSimClockGatePortB);
+  SIM_HAL_EnableClock(SIM,kSimClockGatePortA);
   SIM_HAL_EnableClock(SIM,kSimClockGatePortC);
   SIM_HAL_EnableClock(SIM,kSimClockGatePortD);
   SIM_HAL_EnableClock(SIM,kSimClockGatePortE);
-  SIM_HAL_EnableClock(SIM,kSimClockGatePortA);
 
   /* Setup board clock source. */
   g_xtal0ClkFreq = 8000000U;            /* Value of the external crystal or oscillator clock frequency of the system oscillator (OSC) in Hz */
   
   init_adc_pins(ADC0_IDX);
+  init_gpio_pins(GPIOA_IDX);
   init_gpio_pins(GPIOB_IDX);
   init_gpio_pins(GPIOC_IDX);
   init_gpio_pins(GPIOD_IDX);

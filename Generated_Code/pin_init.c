@@ -7,7 +7,7 @@
 **     Version     : Component 1.2.0, Driver 1.4, CPU db: 3.00.000
 **     Repository  : KSDK 1.3.0
 **     Compiler    : GNU C Compiler
-**     Date/Time   : 2016-09-13, 14:09, # CodeGen: 39
+**     Date/Time   : 2016-09-15, 17:14, # CodeGen: 52
 **     Abstract    :
 **
 **     Settings    :
@@ -440,8 +440,8 @@
 **                Slew rate                                : <Automatic>
 **                Drive strength                           : <Automatic>
 **                Passive filter                           : <Automatic>
-**                Pull select                              : <Automatic>
-**                Pull enable                              : <Automatic>
+**                Pull select                              : Pullup
+**                Pull enable                              : Enabled
 **              Pin 3: PTE2/SPI1_SCK                       : 
 **                Custom name, Signal name                 : J9_9
 **                Slew rate                                : <Automatic>
@@ -1013,6 +1013,10 @@ void deinit_adc_pins(uint32_t instance)
 void init_gpio_pins(uint32_t instance)
 {
   switch(instance) {    
+    case GPIOA_IDX:                     /* GPIOA_IDX */
+      /* Affects PORTA_PCR5 register */
+      PORT_HAL_SetMuxMode(PORTA,5UL,kPortMuxAsGpio);
+      break;
     case GPIOB_IDX:                     /* GPIOB_IDX */
       /* Affects PORTB_PCR18 register */
       PORT_HAL_SetMuxMode(PORTB,18UL,kPortMuxAsGpio);
@@ -1048,6 +1052,9 @@ void init_gpio_pins(uint32_t instance)
 void deinit_gpio_pins(uint32_t instance)
 {
   switch(instance) {    
+    case GPIOA_IDX:                     /* GPIOA_IDX */
+      PORT_HAL_SetMuxMode(PORTA,5UL,kPortPinDisabled);
+      break;
     case GPIOB_IDX:                     /* GPIOB_IDX */
       PORT_HAL_SetMuxMode(PORTB,18UL,kPortPinDisabled);
       PORT_HAL_SetMuxMode(PORTB,19UL,kPortPinDisabled);
@@ -1281,6 +1288,7 @@ void init_uart_pins(uint32_t instance)
     case UART1_IDX:                     /* UART1_IDX */
       /* Affects PORTE_PCR1 register */
       PORT_HAL_SetMuxMode(PORTE,1UL,kPortMuxAlt3);
+      PORT_HAL_SetPullCmd(PORTE,1UL,true);
       SIM_HAL_SetUartRxSrcMode(SIM,UART1_IDX,kSimUartRxsrcPin);  
       /* Affects PORTE_PCR0 register */
       PORT_HAL_SetMuxMode(PORTE,0UL,kPortMuxAlt3);
