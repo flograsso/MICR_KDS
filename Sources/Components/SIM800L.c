@@ -44,7 +44,7 @@ void SIM800L_INIT()
 	UART_DRV_Init(UART_1_IDX,&UART_1_STATE,&UART_1_CONFIG);
 	UART_DRV_InstallRxCallback(UART_1_IDX,UART_1_RxCallback,&(SIM800L.UART1_RxByte),NULL,true);
 
-	/*HARD RESET*/
+
 	do{
 		GPIO_DRV_ClearPinOutput(GPIO_PTC8);
 		OSA_TimeDelay(2000);
@@ -309,7 +309,7 @@ uint8_t SIM800L_ESTABLISH_TCP_CONNECTION()
 
 	SIM800L_SEND_COMMAND(AT_CIPSTART_CESPI,strlen(AT_CIPSTART_CESPI));
 	OSA_TimeDelay(5000);
-	if((SIM800L_FIND_WORD_IN_BUFFER(word,strlen(word)))||(SIM800L_FIND_WORD_IN_BUFFER(word2,strlen(word2))))
+	if(SIM800L_FIND_WORD_IN_BUFFER(word,strlen(word)) || SIM800L_FIND_WORD_IN_BUFFER(word2,strlen(word2)))
 	{
 		ok=1;
 		CONSOLE_SEND("TCP CONNECTION ESTABLISHED WITH: ",33);
@@ -353,7 +353,7 @@ uint8_t SIM800L_CLOSE_TCP_CONNECTION()
 	uint8_t *word="CLOSE OK";
 
 	SIM800L_SEND_COMMAND(AT_CIPCLOSE_1,strlen(AT_CIPCLOSE_1));
-	OSA_TimeDelay(3000);
+	OSA_TimeDelay(6000);
 
 	if(SIM800L_FIND_WORD_IN_BUFFER(word,strlen(word)))
 	{
@@ -398,7 +398,7 @@ uint8_t SIM800L_GPRS_ATTACHMENT_OK()
 	uint8_t *word="OK";
 
 	SIM800L_SEND_COMMAND(AT_CGATT_1,strlen(AT_CGATT_1));
-	OSA_TimeDelay(3000);
+	OSA_TimeDelay(6000);
 
 	if(SIM800L_FIND_WORD_IN_BUFFER(word,strlen(word)) )
 	{
@@ -737,7 +737,7 @@ uint8_t SIM800L_IS_RESPONDING_NO_ECHO()
 	uint8_t ok=0;
 
 	SIM800L_SEND_COMMAND(AT,strlen(AT));
-	OSA_TimeDelay(500);
+	OSA_TimeDelay(2000);
 
 	if( SIM800L_FIND_WORD_IN_BUFFER(word,strlen(word)) )
 	{
@@ -754,7 +754,7 @@ uint8_t SIM800L_IS_GPRS_CONNECTION_ACTIVE()
 	uint8_t ok=0;
 
 	SIM800L_SEND_COMMAND(AT_CIICR,strlen(AT_CIICR));
-	OSA_TimeDelay(3000);
+	OSA_TimeDelay(20000);
 
 	if( SIM800L_FIND_WORD_IN_BUFFER(word,strlen(word)) )
 	{
@@ -811,7 +811,6 @@ uint8_t SIM800L_IS_SIM_READY()
 		SIM800L.Sim_Ready=0;
 		CONSOLE_SEND("SIM IS NOT READY\r\n",18);
 	}
-
 	SIM800L_FLUSH_RX_BUFFER();
 	return ok;
 }
@@ -862,14 +861,48 @@ uint8_t SIM800L_POWER_DOWN_SOFTWARE()
 }
 
 
+uint8_t SIM800L_FIND_WORD_IN_BUFFER(uint8_t *word, uint32_t wordSize){
+	uint8_t ok=0;
+	if(strstr(SIM800L.UART1_RxBuffer, word) != NULL) {
+	    ok=1;
+	}
+	//CONSOLE_SEND(&SIM800L.UART1_RxBuffer,strlen(SIM800L.UART1_RxBuffer));
+	return ok;
+}
 
+/*
 uint8_t SIM800L_FIND_WORD_IN_BUFFER(uint8_t *word, uint32_t wordSize)
 {
-	uint32_t indexBuffer=0,indexWord;
+	uint32_t indexBuffer=0;
+	uint32_t indexWord=0;
 	uint8_t ok=0;
-	while((SIM800L.UART1_RxBuffer[indexBuffer] != word[0]) && (SIM800L.UART1_RxBuffer[indexBuffer] != '\0') && (indexBuffer < (SIM800L_RX_BUFFER_SIZE -1)) )
+	if (aux==1){
+		CONSOLE_SEND("WORD1_",6);
+		CONSOLE_SEND(&word[0],1);
+		CONSOLE_SEND("\r\n",2);
+		CONSOLE_SEND("WORD2_",6);
+		CONSOLE_SEND(&word[1],1);
+		CONSOLE_SEND("\r\n",2);
+
+	}
+	while(
+			!( (SIM800L.UART1_RxBuffer[indexBuffer] = word[0]) && (SIM800L.UART1_RxBuffer[indexBuffer+1] = word[1])) && (indexBuffer < (SIM800L_RX_BUFFER_SIZE -1))
+			)
 	{
+				if (aux==1){
+					CONSOLE_SEND("WHILE1=",7);
+					CONSOLE_SEND(&SIM800L.UART1_RxBuffer[indexBuffer],1);
+					CONSOLE_SEND("\r\n",2);
+
+				}
+
 				indexBuffer++;
+				if (aux==1){
+					CONSOLE_SEND("WHILE1+1=",9);
+					CONSOLE_SEND(&SIM800L.UART1_RxBuffer[indexBuffer],1);
+					CONSOLE_SEND("\r\n",2);
+
+				}
 	}
 	if( indexBuffer < (SIM800L_RX_BUFFER_SIZE -1))
 	{
@@ -877,8 +910,28 @@ uint8_t SIM800L_FIND_WORD_IN_BUFFER(uint8_t *word, uint32_t wordSize)
 		indexBuffer++;
 		while(SIM800L.UART1_RxBuffer[indexBuffer] == word[indexWord] )
 		{
+			if (aux==1){
+				CONSOLE_SEND("WHILE2=",7);
+				CONSOLE_SEND(&SIM800L.UART1_RxBuffer[indexBuffer],1);
+				CONSOLE_SEND("\r\n",2);
+
+				CONSOLE_SEND("WORD=",5);
+				CONSOLE_SEND(&word[indexWord],1);
+				CONSOLE_SEND("\r\n",2);
+
+			}
 			indexWord++;
 			indexBuffer++;
+			if (aux==1){
+				CONSOLE_SEND("WHILE2+1=",9);
+				CONSOLE_SEND(&SIM800L.UART1_RxBuffer[indexBuffer],1);
+				CONSOLE_SEND("\r\n",2);
+
+				CONSOLE_SEND("WORD+1=",5);
+				CONSOLE_SEND(&word[indexWord],1);
+				CONSOLE_SEND("\r\n",2);
+
+			}
 		}
 		if(indexWord==wordSize)
 		{
@@ -888,7 +941,7 @@ uint8_t SIM800L_FIND_WORD_IN_BUFFER(uint8_t *word, uint32_t wordSize)
 	return ok;
 
 }
-
+*/
 uint8_t SIM800L_CHECK_STATUS()
 {
 	uint8_t ok=1;
@@ -903,6 +956,11 @@ uint8_t SIM800L_CHECK_STATUS()
 	{
 		ok=0;
 	}
+	/*AT+CPIN?*/
+	if( !SIM800L_IS_SIM_READY())
+	{
+		ok=0;
+	}
 	/*AT+CSQ*/
 	if (!SIM800L_GET_SIGNAL_QUALITY())
 	{
@@ -910,11 +968,6 @@ uint8_t SIM800L_CHECK_STATUS()
 	}
 	/*AT+CGSN*/
 	if(!SIM800L_GET_IMEI())
-	{
-		ok=0;
-	}
-	/*AT+CPIN?*/
-	if( !SIM800L_IS_SIM_READY())
 	{
 		ok=0;
 	}
@@ -941,6 +994,11 @@ uint8_t SIM800L_CONNECT_GPRS()
 {
 	uint8_t ok=1;
 
+	/*AT_CGATT=1*/
+	if (!SIM800L_GPRS_ATTACHMENT_OK())
+	{
+		ok=0;
+	}
 	/*AT+CIPSHUT*/
 	if (!SIM800L_CIPSHUT())
 	{
@@ -961,12 +1019,6 @@ uint8_t SIM800L_CONNECT_GPRS()
 	{
 		ok=0;
 	}
-	/*AT_CGATT=1*/
-	if (!SIM800L_GPRS_ATTACHMENT_OK())
-	{
-		ok=0;
-	}
-
 	return ok;
 
 }
@@ -1005,21 +1057,19 @@ uint8_t SIM800L_GET_IP_STATUS()
 
 	if(SIM800L_FIND_WORD_IN_BUFFER(close,strlen(close)))
 	{
-		ok=IP_STATUS_TCP_CLOSED;
 		CONSOLE_SEND("IP STATUS: TCP CLOSED\r\n",23);
 	}
 	else
 	{
 		if(SIM800L_FIND_WORD_IN_BUFFER(connected,strlen(connected)))
 		{
-			ok=IP_STATUS_TCP_CONNECTED;
 			CONSOLE_SEND("IP STATUS: TCP CONNECTED\r\n",26);
 		}
 		else
 		{
 			if(SIM800L_FIND_WORD_IN_BUFFER(initial,strlen(initial)))
 			{
-				ok=IP_STATUS_TCP_INITIAL;
+				ok=1;
 				CONSOLE_SEND("IP STATUS: TCP INITIAL\r\n",24);
 			}
 			else
