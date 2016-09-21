@@ -7,8 +7,8 @@
  * @brief Driver for TMP36GZ temperature sensor
  * 		  The driver works reading analog voltage input
  * 		  Uses ADC0-SE9
- * 		  PIN 1: Vcc (2.7 to 5.5V)
- * 		  PIN 2: Analog Voltage Output: connect this pin to ADC0_SE9 = PTB1
+ * 		  PIN 1 (Vcc): Connect to 3.3V
+ * 		  PIN 2: Analog Voltage Output: connect this pin to ADC0_SE9 = PTB1 = Arduino A1
  * 		  PIN 3: Gnd: connect this pin to Ground
  *
  *
