@@ -7,7 +7,7 @@
 **     Version     : Component 1.3.0, Driver 01.00, CPU db: 3.00.000
 **     Repository  : KSDK 1.3.0
 **     Compiler    : GNU C Compiler
-**     Date/Time   : 2016-09-15, 17:14, # CodeGen: 52
+**     Date/Time   : 2016-09-21, 11:38, # CodeGen: 55
 **
 **     Copyright : 1997 - 2015 Freescale Semiconductor, Inc. 
 **     All Rights Reserved.
@@ -94,6 +94,12 @@ const gpio_output_pin_user_config_t GPIO_0_OUTPUTS_CONFIG[] = {
   {
     .pinName = GPIO_PTA5,
     .config.outputLogic = 0,
+    .config.slewRate = kPortSlowSlewRate,
+    .config.driveStrength = kPortLowDriveStrength,
+  },
+  {
+    .pinName = GPIO_PTB3,
+    .config.outputLogic = 1,
     .config.slewRate = kPortSlowSlewRate,
     .config.driveStrength = kPortLowDriveStrength,
   },

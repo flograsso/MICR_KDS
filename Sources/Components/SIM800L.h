@@ -20,6 +20,22 @@
 #include "string.h"
 
 /**
+ * @brief SIM900 PWRKEY Pin
+ *
+ */
+#define SIM900_PWRKEY_PIN 	GPIO_PTC8
+/**
+ * @brief SIM900 Reset Pin
+ *
+ */
+#define SIM900_RESET_PIN 	GPIO_PTA5
+/**
+ * @brief Relay SRD-05VDC-SL IN Pin
+ *
+ */
+#define RELAY_IN_PIN 		GPIO_PTB3
+
+/**
  * @brief Time that SIM800L remains OFF when performing a RESET in milliseconds
  *
  */
@@ -79,7 +95,7 @@
  * @brief MAX RETRIES FOR SENDING SUCCESSFULLY, SHOULD RECEIVE SEND OK
  *
  */
-#define SEND_MAX_RETRIES 4
+#define SEND_MAX_RETRIES 2
 /**
  * @brief TOTAL RETRIES FOR SENDING SUCCESSFULLY SINCE SIM800L STARTED OPERATING
  *

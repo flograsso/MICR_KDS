@@ -7,7 +7,7 @@
 **     Version     : Component 1.2.0, Driver 1.4, CPU db: 3.00.000
 **     Repository  : KSDK 1.3.0
 **     Compiler    : GNU C Compiler
-**     Date/Time   : 2016-09-15, 17:14, # CodeGen: 52
+**     Date/Time   : 2016-09-21, 11:37, # CodeGen: 54
 **     Abstract    :
 **
 **     Settings    :
@@ -1018,6 +1018,8 @@ void init_gpio_pins(uint32_t instance)
       PORT_HAL_SetMuxMode(PORTA,5UL,kPortMuxAsGpio);
       break;
     case GPIOB_IDX:                     /* GPIOB_IDX */
+      /* Affects PORTB_PCR3 register */
+      PORT_HAL_SetMuxMode(PORTB,3UL,kPortMuxAsGpio);
       /* Affects PORTB_PCR18 register */
       PORT_HAL_SetMuxMode(PORTB,18UL,kPortMuxAsGpio);
       /* Affects PORTB_PCR19 register */
@@ -1056,6 +1058,7 @@ void deinit_gpio_pins(uint32_t instance)
       PORT_HAL_SetMuxMode(PORTA,5UL,kPortPinDisabled);
       break;
     case GPIOB_IDX:                     /* GPIOB_IDX */
+      PORT_HAL_SetMuxMode(PORTB,3UL,kPortPinDisabled);
       PORT_HAL_SetMuxMode(PORTB,18UL,kPortPinDisabled);
       PORT_HAL_SetMuxMode(PORTB,19UL,kPortPinDisabled);
       break;
