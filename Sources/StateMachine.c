@@ -540,7 +540,7 @@ SIM800L_error_t SEND_DATA_GPRS_TASK(message_t messageType, uint32_t *distanceSam
 						}
 						else
 						{
-							state = ESTABLISH_TCP_CONNECTION;
+							state = CONNECT_GPRS;
 							partialReboots++;
 						}
 					}
