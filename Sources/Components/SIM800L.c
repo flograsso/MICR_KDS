@@ -78,6 +78,32 @@ void SIM800L_RESET(){
 	uint8_t retries = 0;
 	CONSOLE_SEND("RESETTING SIM800L...\r\n",22);
 
+	/*Turn OFF Relay*/
+	GPIO_DRV_SetPinOutput(RELAY_IN_PIN);
+	OSA_TimeDelay(1000);
+
+	/*INIT UART1*/
+	UART_DRV_Deinit(UART_1_IDX);
+	UART_DRV_Init(UART_1_IDX,&UART_1_STATE,&UART_1_CONFIG);
+	UART_DRV_InstallRxCallback(UART_1_IDX,UART_1_RxCallback,&(SIM800L.UART1_RxByte),NULL,true);
+
+	/*Turn ON Relay*/
+	GPIO_DRV_ClearPinOutput(RELAY_IN_PIN);
+
+	while (!SIM800L_IS_RESPONDING_NO_ECHO() && (retries <= RESET_MAX_RETRIES)){
+		GPIO_DRV_ClearPinOutput(SIM900_PWRKEY_PIN);
+		OSA_TimeDelay(2000);
+		GPIO_DRV_SetPinOutput(SIM900_PWRKEY_PIN);
+		OSA_TimeDelay(SIM800L_TURN_OFF_MS);
+		GPIO_DRV_ClearPinOutput(SIM900_PWRKEY_PIN);
+		OSA_TimeDelay(SIM800L_WAIT_FOR_NETWORK_MS);
+		retries++;
+	}
+
+
+
+/*
+
 	GPIO_DRV_ClearPinOutput(SIM900_RESET_PIN);
 	OSA_TimeDelay(2000);
 	GPIO_DRV_SetPinOutput(SIM900_RESET_PIN);
@@ -93,8 +119,8 @@ void SIM800L_RESET(){
 		OSA_TimeDelay(SIM800L_WAIT_FOR_NETWORK_MS);
 		retries++;
 	}
-	/*
-	/*Turn OFF
+
+	Turn OFF
 	if(!SIM800L_POWER_DOWN_SOFTWARE()){
 		GPIO_DRV_ClearPinOutput(SIM900_PWRKEY_PIN);
 		OSA_TimeDelay(2000);
@@ -106,7 +132,7 @@ void SIM800L_RESET(){
 
 	CONSOLE_SEND("TURNING ON...\r\n",15);
 
-	/*Turn On
+	Turn On
 	do{
 		GPIO_DRV_ClearPinOutput(SIM900_PWRKEY_PIN);
 		OSA_TimeDelay(2000);
@@ -852,9 +878,8 @@ uint8_t SIM800L_POWER_DOWN_SOFTWARE()
 	uint8_t *word="NORMAL";
 	uint8_t ok=0;
 
-	OSA_TimeDelay(2000);
 	SIM800L_SEND_COMMAND(AT_CPOWD_1,strlen(AT_CPOWD_1));
-	OSA_TimeDelay(7000);
+	OSA_TimeDelay(5000);
 
 	if( SIM800L_FIND_WORD_IN_BUFFER(word,strlen(word)) )
 	{
