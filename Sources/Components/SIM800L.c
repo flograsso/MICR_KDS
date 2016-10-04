@@ -80,7 +80,7 @@ void SIM800L_RESET(){
 
 	/*Turn OFF Relay*/
 	GPIO_DRV_SetPinOutput(RELAY_IN_PIN);
-	OSA_TimeDelay(1000);
+	OSA_TimeDelay(5000);
 
 	/*INIT UART1*/
 	UART_DRV_Deinit(UART_1_IDX);

@@ -617,9 +617,8 @@ void Application()
 		switch(currentState)
 		{
 			case RECEIVE_CONFIG:
-				Init();
 				RECEIVE_CONFIG_TASK(&sendPeriodHours,&samplesPerHour,&minutesLeaveIdle);
-
+				Init();
 				currentState = IDLE;
 				break;
 
