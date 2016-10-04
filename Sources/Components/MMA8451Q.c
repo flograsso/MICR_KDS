@@ -14,7 +14,6 @@
  */
 
 #include "MMA8451Q.h"
-
 mma8451q_t Mma8451q;
 
 
@@ -56,6 +55,21 @@ void MMA8451Q_GET_DATA()
 	// Convert raw data to angle (normalize to 0-90 degrees).  No negative angles.
 	Mma8451q.xAngle = abs((int16_t)(Mma8451q.xData * 0.011));
 	Mma8451q.yAngle = abs((int16_t)(Mma8451q.yData * 0.011));
+
+	/*To show values*/
+	/*
+	char aux[10];
+
+	sprintf(&aux,"%d",Mma8451q.xAngle);
+	CONSOLE_SEND("X angle: ",9);
+	CONSOLE_SEND(&aux,strlen(aux));
+	CONSOLE_SEND("\r\n",2);
+
+	sprintf(&aux,"%d",Mma8451q.yAngle);
+	CONSOLE_SEND("Y angle: ",9);
+	CONSOLE_SEND(&aux,strlen(aux));
+	CONSOLE_SEND("\r\n",2);
+	*/
 }
 
 
@@ -83,10 +97,9 @@ MMA8451_state_t MMA8451_GET_STATE(MMA8451_orientation_t orientation)
 {
 	MMA8451Q_GET_DATA();
 	MMA8451_state_t exitCode;
-
 	if(orientation == MMA8451_HORIZONTAL)
 	{
-		if(Mma8451q.yAngle > MMA8451_Y_ANGLE_HORIZONTAL_OK)
+		if((Mma8451q.yAngle > MMA8451_Y_ANGLE_HORIZONTAL_OK) ||(Mma8451q.xAngle > MMA8451_X_ANGLE_HORIZONTAL_OK) )
 		{
 			exitCode =MMA8451_FALL ;
 		}

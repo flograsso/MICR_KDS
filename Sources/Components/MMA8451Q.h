@@ -14,7 +14,7 @@
 
 #include "i2cCom1.h"
 #include "accel.h"
-
+#include "CONSOLE.h"
 /**
  * @brief MMA8451Q I2C ADDRESS
  *
@@ -31,7 +31,14 @@
  * @details 45 DEGREES IS THE MAX Y ANGLE VALUE
  *
  */
-#define MMA8451_Y_ANGLE_HORIZONTAL_OK 45
+#define MMA8451_Y_ANGLE_HORIZONTAL_OK 70
+
+/**
+ * @brief MMA8451 MAX X ANGLE VALUE WHEN BOARD PLACED HORIZONTAL
+ * @details 45 DEGREES IS THE MAX X ANGLE VALUE
+ *
+ */
+#define MMA8451_X_ANGLE_HORIZONTAL_OK 70
 /**
  * @brief Struct for MMA8451Q properties
  *

@@ -42,7 +42,7 @@
 
 /**
  * @brief RESOLUTION FOR MaxSonar EZ1 ANALOG VOLTAGE IS VCC/512 PER INCH
- * @details (3.3 / 512) v/inch  * 0,03937 inch/mm
+ * @details (3300 / 512) mv/inch  * 0,03937 inch/mm
  *
  */
 #define EZ1_MILIVOLTS_PER_MM 0.253752f
