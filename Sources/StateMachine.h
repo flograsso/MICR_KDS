@@ -23,7 +23,7 @@
  * @brief Set configuration and timing values.
  */
 #if DEMO_MODE
-
+	/*DEMO MODE*/
 	/**
 	 * @brief Default value of send period time
 	 *
@@ -49,8 +49,14 @@
 	 */
 	#define LPTMR_CONFIG_TIMEOUT_INTERRUPT_PERIOD_US		60000000 /*60 SEC*/
 
-#else
+	/**
+	 * @brief Number of LPTMR interrupts to send FALL_ALARM
+	 * @details 15 sec
+	 */
+	#define FALL_ALARM_COUNTER_MAX 15
 
+#else
+	/*NORMAL MODE*/
 	/**
 	 * @brief Default value of send period time
 	 *
@@ -76,6 +82,11 @@
 	 */
 	#define LPTMR_CONFIG_TIMEOUT_INTERRUPT_PERIOD_US		60000000 /*60 SEC*/
 
+	/**
+	 * @brief Number of LPTMR interrupts to send FALL_ALARM
+	 * @details 5 minutes
+	 */
+	#define FALL_ALARM_COUNTER_MAX 5
 #endif
 
 /**

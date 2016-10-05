@@ -600,7 +600,7 @@ void Application()
 {
 	uint32_t minutes=0, hours=0, samples=0, arrayIndex=0;
 	static state_t currentState = RECEIVE_CONFIG;
-	static uint32_t sendPeriodHours, samplesPerHour,minutesLeaveIdle = 0;
+	static uint32_t sendPeriodHours, samplesPerHour,minutesLeaveIdle,fallCounter = 0;
 	static uint32_t distanceSamplesArray[MAX_ALLOWED_SEND_PERIOD_HOURS];
 	static message_t messageType = SAMPLES;
 	static uint16_t distance;
@@ -672,17 +672,22 @@ void Application()
 				{
 					if(!fallAlarmSent)
 					{
-						CONSOLE_SEND("FALL ALARM\r\n",12);
-						messageType = FALL_ALARM;
-						currentState = SEND_DATA;
+						fallCounter++;
+						if (fallCounter>=FALL_ALARM_COUNTER_MAX){
+							CONSOLE_SEND("FALL ALARM\r\n",12);
+							messageType = FALL_ALARM;
+							currentState = SEND_DATA;
+						}
 					}
 				}
 				else
 				{
 					/*CONTAINER AGAIN IN ITS RIGHT PLACE*/
+					fallCounter=0;
 					if(fallAlarmSent)
 					{
 						fallAlarmSent = 0;
+
 					}
 				}
 
