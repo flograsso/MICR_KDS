@@ -14,16 +14,69 @@
 #include "Hardware.h"
 
 /**
- * @brief Default value of send period time
+ * @brief Flag to set DEBUG mode ON/OFF
  *
  */
-#define DEFAULT_SEND_PERIOD_HOURS 1
+#define DEMO_MODE	1
 
 /**
- * @brief Default value of samples per hour
- *
+ * @brief Set configuration and timing values.
  */
-#define DEFAULT_SAMPLES_PER_HOUR 10
+#if DEMO_MODE
+
+	/**
+	 * @brief Default value of send period time
+	 *
+	 */
+	#define DEFAULT_SEND_PERIOD_HOURS 1
+
+	/**
+	 * @brief Default value of samples per hour
+	 *
+	 */
+
+	#define DEFAULT_SAMPLES_PER_HOUR 10
+	/**
+	 * @brief Time for LPTMR interrupt in microseconds
+	 * @attention SET TO ONE MINUTE (60000000) => MÁX TIME SLEEPING
+	 *
+	 */
+	#define LPTMR_INTERRUPT_PERIOD_US		1000000 /*1 SEC - DEBUGGING TIME*/
+
+	/**
+	 * @brief Time for LPTMR config timeout interrupt in microseconds
+	 *
+	 */
+	#define LPTMR_CONFIG_TIMEOUT_INTERRUPT_PERIOD_US		60000000 /*60 SEC*/
+
+#else
+
+	/**
+	 * @brief Default value of send period time
+	 *
+	 */
+	#define DEFAULT_SEND_PERIOD_HOURS 4
+
+	/**
+	 * @brief Default value of samples per hour
+	 *
+	 */
+
+	#define DEFAULT_SAMPLES_PER_HOUR 1
+	/**
+	 * @brief Time for LPTMR interrupt in microseconds
+	 * @attention SET TO ONE MINUTE (60000000) => MÁX TIME SLEEPING
+	 *
+	 */
+	#define LPTMR_INTERRUPT_PERIOD_US		60000000  /*ONE MINUTE*/
+
+	/**
+	 * @brief Time for LPTMR config timeout interrupt in microseconds
+	 *
+	 */
+	#define LPTMR_CONFIG_TIMEOUT_INTERRUPT_PERIOD_US		60000000 /*60 SEC*/
+
+#endif
 
 /**
  * @brief Maximun number of hours for sending data
@@ -31,19 +84,6 @@
  */
 #define MAX_ALLOWED_SEND_PERIOD_HOURS 8
 
-/**
- * @brief Time for LPTMR config timeout interrupt in microseconds
- *
- */
-#define LPTMR_CONFIG_TIMEOUT_INTERRUPT_PERIOD_US		20000000 /*20 SEC*/
-
-/**
- * @brief Time for LPTMR interrupt in microseconds
- * @attention SET TO ONE MINUTE (60000000) => MÁX TIME SLEEPING
- *
- */
-#define LPTMR_INTERRUPT_PERIOD_US		1000000 /*1 SEC*/
-/*#define LPTMR_INTERRUPT_PERIOD_US		60000000 ONE MINUTE*/
 
 /**
  * @brief Number of LPTMR interrupts per hour
@@ -55,7 +95,7 @@
  * @brief Distance when container is full. MB7360 returns 400mm if object is 400mm or nearer to the sensor.
  *
  */
-#define	DISTANCE_THRESHOLD	400
+#define	DISTANCE_THRESHOLD	200
 /**
  * @brief When MB7360 reading fails, it returns máx value: 4995mm
  *
@@ -84,12 +124,12 @@
  */
 typedef enum
 {
-	RECEIVE_CONFIG,
-	IDLE,
-	MEASURE_TEMPERATURE,
-	MEASURE_DISTANCE,
-	PREPARE_BUFFER,
-	SEND_DATA
+	RECEIVE_CONFIG,     //!< RECEIVE_CONFIG
+	IDLE,               //!< IDLE
+	MEASURE_TEMPERATURE,//!< MEASURE_TEMPERATURE
+	MEASURE_DISTANCE,   //!< MEASURE_DISTANCE
+	PREPARE_BUFFER,     //!< PREPARE_BUFFER
+	SEND_DATA           //!< SEND_DATA
 
 }
 state_t;

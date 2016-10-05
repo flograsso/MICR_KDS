@@ -902,7 +902,7 @@
     </GenFiles>
     <SignalListFile />
     <DestinationCompiler>GNUC</DestinationCompiler>
-    <ProjectModificationStamp>102</ProjectModificationStamp>
+    <ProjectModificationStamp>105</ProjectModificationStamp>
   </Options>
   <CpuID_1>
     <Generated>true</Generated>
@@ -1379,7 +1379,7 @@
     <GenDriverVersion>1.4</GenDriverVersion>
     <GenEventModule />
     <HeaderAge>1227778876</HeaderAge>
-    <CodeAge>1227852256</CodeAge>
+    <CodeAge>1228233923</CodeAge>
     <AsemblAge>-1</AsemblAge>
     <GenNumMethods>41</GenNumMethods>
     <hardware_init>true</hardware_init>
@@ -1440,7 +1440,7 @@
       <MethodType>method</MethodType>
       <ModuleType>Code</ModuleType>
       <LineBeg>977</LineBeg>
-      <LineEnd>1343</LineEnd>
+      <LineEnd>1346</LineEnd>
     </MethodPos>
     <GenExtraFilesCount>2</GenExtraFilesCount>
     <ExtraFile0>Generated_Code\board.h</ExtraFile0>
@@ -1776,8 +1776,8 @@
     <GenComponentVersion>1.3.0</GenComponentVersion>
     <GenDriverVersion>01.00</GenDriverVersion>
     <GenEventModule>Events</GenEventModule>
-    <HeaderAge>1227852256</HeaderAge>
-    <CodeAge>1227852256</CodeAge>
+    <HeaderAge>1228233945</HeaderAge>
+    <CodeAge>1228233945</CodeAge>
     <AsemblAge>-1</AsemblAge>
     <GenNumMethods>12</GenNumMethods>
     <GPIO_DRV_Init>true</GPIO_DRV_Init>

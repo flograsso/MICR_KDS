@@ -238,10 +238,9 @@
 			</tr>
 			<tr bgcolor='#E5C3FF'><td>TSI0</td><td>tsi_ch7</td><td>alt0</td><td>Input</td></tr>
 			<tr>
-				<td rowspan='2'>46</td><td rowspan='2'>ADC0_SE13/TSI0_CH8/PTB3/I2C0_SDA/TPM2_CH1</td><td rowspan='2'>J10_8</td>
-				<td bgcolor='#F8FF9A'>ADC0</td><td bgcolor='#F8FF9A'>adc_se13</td><td bgcolor='#F8FF9A'>alt0</td><td bgcolor='#F8FF9A'>Input</td>
+				<td>46</td><td>ADC0_SE13/TSI0_CH8/PTB3/I2C0_SDA/TPM2_CH1</td><td>J10_8</td>
+				<td bgcolor='#F7DCFF'>GPIOB</td><td bgcolor='#F7DCFF'>port3</td><td bgcolor='#F7DCFF'>alt1</td><td bgcolor='#F7DCFF'>Output</td>
 			</tr>
-			<tr bgcolor='#E5C3FF'><td>TSI0</td><td>tsi_ch8</td><td>alt0</td><td>Input</td></tr>
 			<tr>
 				<td>47</td><td>PTB8/EXTRG_IN</td><td>J9_1</td>
 				<td></td><td></td><td></td><td></td>
@@ -1525,10 +1524,9 @@
 			</tr>
 			<tr bgcolor='#E5C3FF'><td>TSI0</td><td>tsi_ch7</td><td>alt0</td><td>Input</td></tr>
 			<tr>
-				<td rowspan='2'>46</td><td rowspan='2'>ADC0_SE13/TSI0_CH8/PTB3/I2C0_SDA/TPM2_CH1</td><td rowspan='2'>J10_8</td>
-				<td bgcolor='#F8FF9A'>ADC0</td><td bgcolor='#F8FF9A'>adc_se13</td><td bgcolor='#F8FF9A'>alt0</td><td bgcolor='#F8FF9A'>Input</td>
+				<td>46</td><td>ADC0_SE13/TSI0_CH8/PTB3/I2C0_SDA/TPM2_CH1</td><td>J10_8</td>
+				<td bgcolor='#F7DCFF'>GPIOB</td><td bgcolor='#F7DCFF'>port3</td><td bgcolor='#F7DCFF'>alt1</td><td bgcolor='#F7DCFF'>Output</td>
 			</tr>
-			<tr bgcolor='#E5C3FF'><td>TSI0</td><td>tsi_ch8</td><td>alt0</td><td>Input</td></tr>
 			<tr>
 				<td>47</td><td>PTB8/EXTRG_IN</td><td>J9_1</td>
 				<td></td><td></td><td></td><td></td>
