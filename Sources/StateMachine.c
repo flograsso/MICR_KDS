@@ -591,8 +591,6 @@ SIM800L_error_t SEND_DATA_GPRS_TASK(message_t messageType, uint32_t *distanceSam
 void Init(){
 	CONSOLE_INIT();
 	MB7360_CALIBRATE();
-	/*Clear the EZ1-RX pin*/
-	GPIO_DRV_ClearPinOutput(GPIO_PTC9);
 	/*Clear the SIM900-PWRKEY pin*/
 	GPIO_DRV_ClearPinOutput(GPIO_PTC8);
 }
@@ -602,6 +600,7 @@ void Application()
 	static state_t currentState = RECEIVE_CONFIG;
 	static uint32_t sendPeriodHours, samplesPerHour,minutesLeaveIdle,fallCounter = 0;
 	static uint32_t distanceSamplesArray[MAX_ALLOWED_SEND_PERIOD_HOURS];
+	static uint16_t distanceValues[DISTANCE_SAMPLES_AVG];
 	static message_t messageType = SAMPLES;
 	static uint16_t distance;
 	//static uint8_t HTTP_BUFFER[256];
@@ -609,6 +608,7 @@ void Application()
 	static SIM800L_error_t exitCode;
 	static MMA8451_state_t boardState;
 	uint8_t fullAlarmSent = 0, fireAlarmSent = 0, fallAlarmSent = 0;
+	uint8_t i;
 
 
 
@@ -653,8 +653,6 @@ void Application()
 				temperature = LM35_GET_TEMPERATURE_CELSIUS();
 				LM35_DEINIT();
 				MMA8451Q_INIT();
-
-
 
 				/*TIME TO MEASURE DISTANCE*/
 				if(minutes == minutesLeaveIdle)
@@ -707,13 +705,29 @@ void Application()
 						fireAlarmSent = 0;
 					}
 				}
+
 				break;
+
+
 
 			case MEASURE_DISTANCE:
 				MB7360_INIT();
-				MB7360_START_RANGING();
-				distance = MB7360_GET_DISTANCE_MM();
+				/*Get DISTANCE_SAMPLES_AVG number of samples*/
+				for (i = 0; i<DISTANCE_SAMPLES_AVG;i++){
+					MB7360_START_RANGING();
+					distanceValues[i]=MB7360_GET_DISTANCE_MM();
+					OSA_TimeDelay(400);
+				}
+				/*Delete outlier values and calculate average*/
+				distance = UTILITIES_OUTLIER_AVG(distanceValues,DISTANCE_SAMPLES_AVG);
+
 				MB7360_DEINIT();
+
+				/*Show distance*/
+				sprintf(Mb7360.Distance,"%d",distance);
+				CONSOLE_SEND("MB7360 DISTANCE VALUE: ",23);
+				CONSOLE_SEND(Mb7360.Distance,strlen(Mb7360.Distance));
+				CONSOLE_SEND("mm\r\n",4);
 
 				/*ONE HOUR LAPSE*/
 				if (++samples == samplesPerHour)

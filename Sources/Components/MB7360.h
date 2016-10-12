@@ -86,14 +86,7 @@ void MB7360_CALIBRATE();
  *
  */
 void MB7360_INIT();
-/**
- *
- * This method stops the module by setting PTC9 to logical value '0'
- *
- * @author Valentin Korenblit
- *
- */
-void MB7360_STOP_RANGING();
+
 /**
  *
  * This method indicates the module to start measuring by setting PTC9 to logical value '1'

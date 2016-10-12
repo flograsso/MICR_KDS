@@ -37,9 +37,13 @@ mb7360_t Mb7360;
 
 void MB7360_CALIBRATE()
 {
+	 OSA_TimeDelay(500);
 	 GPIO_DRV_ClearPinOutput(GPIO_PTC9);
-	 OSA_TimeDelay(200);
+	 OSA_TimeDelay(100);
 	 GPIO_DRV_SetPinOutput(GPIO_PTC9);
+	 OSA_TimeDelay(300);
+	 GPIO_DRV_ClearPinOutput(GPIO_PTC9);
+
 }
 
 void MB7360_INIT()
@@ -62,19 +66,16 @@ void MB7360_INIT()
 
 void MB7360_DEINIT()
 {
-	MB7360_STOP_RANGING();
 	ADC16_DRV_Deinit(ADC0_IDX);
 }
 
-void MB7360_STOP_RANGING()
-{
-	GPIO_DRV_ClearPinOutput(GPIO_PTC9);
-}
 
 void MB7360_START_RANGING()
 {
 	GPIO_DRV_SetPinOutput(GPIO_PTC9);
-	OSA_TimeDelay(100);
+	OSA_TimeDelay(300);
+	GPIO_DRV_ClearPinOutput(GPIO_PTC9);
+	OSA_TimeDelay(500);
 }
 
 uint16_t MB7360_GET_DISTANCE_MM()
@@ -89,21 +90,28 @@ uint16_t MB7360_GET_DISTANCE_MM()
 
 	 /*CONVERT mV TO DISTANCE*/
 	 milivolts =  ( ADC0_SE8_RAW_VALUE * 3300.0 ) / ADC0_MAX_VALUE;
+	 //UTILITIES_FLOAT_TO_STR(&milivolts,Mb7360.RawValue,2);
+
+	 //CONSOLE_SEND("MB7360 ADC RAW VALUE: ",22);
+	 //CONSOLE_SEND(Mb7360.RawValue,strlen(Mb7360.RawValue));
+	//CONSOLE_SEND("\r\n",2);
 	 milivolts /= EZ1_MILIVOLTS_PER_MM;
 
 	 centimeters = milivolts / 10.0;
 	 distance = (int) milivolts;
 
-	 sprintf(Mb7360.RawValue,"%d",ADC0_SE8_RAW_VALUE);
-	 /*
+	 //sprintf(Mb7360.RawValue,"%d",ADC0_SE8_RAW_VALUE);
+
+/*
 	 CONSOLE_SEND("MB7360 ADC RAW VALUE: ",22);
 	 CONSOLE_SEND(Mb7360.RawValue,strlen(Mb7360.RawValue));
 	 CONSOLE_SEND("\r\n",2);
-	*/
+*/
 
 	 /*CONVERT RAW VALUE TO DISTANCE*/
+
 	 sprintf(Mb7360.Distance,"%d",distance);
-	 CONSOLE_SEND("MB7360 DISTANCE VALUE: ",23);
+	 CONSOLE_SEND("MB7360 DISTANCE VALUE NO AVG: ",30);
 	 CONSOLE_SEND(Mb7360.Distance,strlen(Mb7360.Distance));
 	 CONSOLE_SEND("mm\r\n",4);
 

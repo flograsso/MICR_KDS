@@ -14,6 +14,7 @@
 
 #include "stdio.h"
 #include "stdint.h"
+#include <stdlib.h>
 
 /**
  *
@@ -40,5 +41,21 @@ void UTILITIES_FLUSH_HTTP_BUFFER(uint8_t *buffer, uint32_t length);
  * @return 1 if char is number or 0 if is not
  */
 uint8_t UTILITIES_IS_NUMBER(uint8_t *buffer);
+
+/**
+ *
+ * This metod calculate median value of a set of data
+ * @author Federico Lo Grasso
+ * @return median value
+ */
+float median (uint16_t *data, uint8_t lenght);
+
+/**
+ *
+ * This metod delete outlier values and calculate the average of a set of data
+ * @author Federico Lo Grasso
+ * @return average of the set without outlier values.
+ */
+uint16_t UTILITIES_OUTLIER_AVG(uint16_t *data,uint8_t length);
 
 #endif /* SOURCES_COMPONENTS_UTILITIES_H_ */
