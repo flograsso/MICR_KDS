@@ -31,21 +31,18 @@ void CREATE_SMS_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSamples
 		buffer[i] = '\0';
 	}
 
-	sprintf(buffer,"imei=%s\nbattery_voltage=%s\nbattery_percentage=%s\ntemperature=%s\nsignal_strength=%s\nsamples_number=%d\r\n\r\n\x1A",
+	sprintf(buffer,"imei=%s\nbattery_voltage=%s\nbattery_percentage=%s\ntemperature=%s\nsignal_strength=%s\nsample0=%s\norientation=%s\nmessage_type=%s\r\n\r\n\x1A",
 			SIM800L.Imei,
 			SIM800L.BatteryVoltageMv,
 			SIM800L.BatteryPercentage,
 			Lm35.Temperature,
 			SIM800L.Signal,
-			sendPeriodHours
-			);
+			Mb7360.Distance,
+			Mma8451_position.state,
+			stringFromMessageType(messageType)
+	);
 
-	for(i=0;i<sendPeriodHours;i++)
-	{
-		sprintf(buffer+strlen(buffer),"\nsample%d=%d",
-		i,
-		distanceSamplesArray[i]);
-	}
+
 }
 
 void CREATE_SMS_ALERT(uint8_t *buffer,uint32_t size,message_t messageType)
@@ -58,26 +55,20 @@ void CREATE_SMS_ALERT(uint8_t *buffer,uint32_t size,message_t messageType)
 	}
 
 
-	sprintf(buffer,"imei=%s\nbattery_voltage=%s\nbattery_percentage=%s\ntemperature=%s\nsignal_strength=%s\nsamples_number=1&sample0=%s\nmessage_type=%s\r\n\r\n\x1A",
+
+	sprintf(buffer,"imei=%s\nbattery_voltage=%s\nbattery_percentage=%s\ntemperature=%s\nsignal_strength=%s\nsample0=%s\norientation=%s\nmessage_type=%s\r\n\r\n\x1A",
 			SIM800L.Imei,
 			SIM800L.BatteryVoltageMv,
 			SIM800L.BatteryPercentage,
 			Lm35.Temperature,
 			SIM800L.Signal,
 			Mb7360.Distance,
+			Mma8451_position.state,
 			stringFromMessageType(messageType)
-			);
+	);
 
-	/*
-	sprintf(buffer,"imei=%s\nbattery_voltage=%s\nbattery_percentage=%s\ntemperature=%s\nsignal_strength=%s\nsamples_number=1\nsample0=%s",
-			SIM800L.Imei,
-			SIM800L.BatteryVoltageMv,
-			SIM800L.BatteryPercentage,
-			Lm35.Temperature,
-			SIM800L.Signal,
-			Mb7360.Distance
-			);
-	*/
+
+
 }
 
 void CREATE_HTTP_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSamplesArray,uint32_t sendPeriodHours,message_t messageType)
@@ -88,6 +79,24 @@ void CREATE_HTTP_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSample
 	{
 		buffer[i] = '\0';
 	}
+
+
+	/*ENVIO DE POSICION*/
+	/*Tambien le quite que envie el nro de muestras (1). Siempre va a mandar 1*/
+	/*
+		sprintf(buffer,"GET %s?imei=%s&battery_voltage=%s&battery_percentage=%s&temperature=%s&signal_strength=%s&sample0=%s&orientation=%s&message_type=%s HTTP/1.1\r\nHost: %s\r\n\r\n\x1A",
+				SERVICE_ROUTE_CESPI,
+				SIM800L.Imei,
+				SIM800L.BatteryVoltageMv,
+				SIM800L.BatteryPercentage,
+				Lm35.Temperature,
+				SIM800L.Signal,
+				Mb7360.Distance,
+				Mma8451_position.state,
+				stringFromMessageType(messageType),
+				SERVER_CESPI
+				);
+	*/
 
 	sprintf(buffer,"GET %s?imei=%s&battery_voltage=%s&battery_percentage=%s&temperature=%s&signal_strength=%s&samples_number=%d&message_type=%s",
 			SERVICE_ROUTE_CESPI,
@@ -100,6 +109,7 @@ void CREATE_HTTP_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSample
 			stringFromMessageType(messageType)
 			);
 
+	/*BORRAR TODO ESTO -->*/
 	for(i=0;i<sendPeriodHours;i++)
 	{
 		sprintf(buffer+strlen(buffer),"&sample%d=%d",
@@ -108,7 +118,7 @@ void CREATE_HTTP_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSample
 	}
 
 	sprintf(buffer+strlen(buffer)," HTTP/1.1\r\nHost: %s\r\n\r\n\x1A",SERVER_CESPI);
-
+	/*<-- BORRAR TODO ESTO*/
 }
 
 
@@ -121,6 +131,23 @@ void CREATE_HTTP_ALERT(uint8_t *buffer,uint32_t size,message_t messageType)
 		buffer[i] = '\0';
 	}
 
+/*ENVIO DE POSICION*/
+/*Tambien le quite que envie el nro de muestras (1). Siempre va a mandar 1*/
+/*
+	sprintf(buffer,"GET %s?imei=%s&battery_voltage=%s&battery_percentage=%s&temperature=%s&signal_strength=%s&sample0=%s&orientation=%s&message_type=%s HTTP/1.1\r\nHost: %s\r\n\r\n\x1A",
+			SERVICE_ROUTE_CESPI,
+			SIM800L.Imei,
+			SIM800L.BatteryVoltageMv,
+			SIM800L.BatteryPercentage,
+			Lm35.Temperature,
+			SIM800L.Signal,
+			Mb7360.Distance,
+			Mma8451_position.state,
+			stringFromMessageType(messageType),
+			SERVER_CESPI
+			);
+*/
+
 	sprintf(buffer,"GET %s?imei=%s&battery_voltage=%s&battery_percentage=%s&temperature=%s&signal_strength=%s&samples_number=1&sample0=%s&message_type=%s HTTP/1.1\r\nHost: %s\r\n\r\n\x1A",
 			SERVICE_ROUTE_CESPI,
 			SIM800L.Imei,
@@ -132,18 +159,7 @@ void CREATE_HTTP_ALERT(uint8_t *buffer,uint32_t size,message_t messageType)
 			stringFromMessageType(messageType),
 			SERVER_CESPI
 			);
-	/*
-	sprintf(buffer,"GET %s?imei=%s&battery_voltage=%s&battery_percentage=%s&temperature=%s&signal_strength=%s&samples_number=1&sample0=%s HTTP/1.1\r\nHost: %s\r\n\r\n\x1A",
-			SERVICE_ROUTE_CESPI,
-			SIM800L.Imei,
-			SIM800L.BatteryVoltageMv,
-			SIM800L.BatteryPercentage,
-			Lm35.Temperature,
-			SIM800L.Signal,
-			Mb7360.Distance,
-			SERVER_CESPI
-			);
-			*/
+
 }
 
 
@@ -675,6 +691,7 @@ void Application()
 							CONSOLE_SEND("FALL ALARM\r\n",12);
 							messageType = FALL_ALARM;
 							currentState = SEND_DATA;
+							Mma8451_position.state=MMA8451_FALL;
 						}
 					}
 				}
@@ -682,6 +699,7 @@ void Application()
 				{
 					/*CONTAINER AGAIN IN ITS RIGHT PLACE*/
 					fallCounter=0;
+					Mma8451_position.state=MMA8451_OK;
 					if(fallAlarmSent)
 					{
 						fallAlarmSent = 0;

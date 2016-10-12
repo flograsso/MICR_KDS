@@ -15,7 +15,7 @@
 
 #include "MMA8451Q.h"
 mma8451q_t Mma8451q;
-
+mma8451_position Mma8451_position;
 
 
 void MMA8451Q_INIT()

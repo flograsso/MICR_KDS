@@ -54,6 +54,10 @@ typedef struct{
 	int16_t yAngle;
 }mma8451q_t;
 
+typedef struct{
+	MMA8451_state_t state = MMA8451_OK;
+}mma8451_position;
+
 typedef enum{
 	MMA8451_OK,
 	MMA8451_FALL
