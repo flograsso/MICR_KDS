@@ -38,7 +38,7 @@ void CREATE_SMS_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSamples
 			Lm35.Temperature,
 			SIM800L.Signal,
 			Mb7360.Distance,
-			Mma8451_position.state,
+			Mma8451q.position,
 			stringFromMessageType(messageType)
 	);
 
@@ -63,7 +63,7 @@ void CREATE_SMS_ALERT(uint8_t *buffer,uint32_t size,message_t messageType)
 			Lm35.Temperature,
 			SIM800L.Signal,
 			Mb7360.Distance,
-			Mma8451_position.state,
+			Mma8451q.position,
 			stringFromMessageType(messageType)
 	);
 
@@ -92,7 +92,7 @@ void CREATE_HTTP_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSample
 				Lm35.Temperature,
 				SIM800L.Signal,
 				Mb7360.Distance,
-				Mma8451_position.state,
+				Mma8451q.position,
 				stringFromMessageType(messageType),
 				SERVER_CESPI
 				);
@@ -142,7 +142,7 @@ void CREATE_HTTP_ALERT(uint8_t *buffer,uint32_t size,message_t messageType)
 			Lm35.Temperature,
 			SIM800L.Signal,
 			Mb7360.Distance,
-			Mma8451_position.state,
+			Mma8451q.position,
 			stringFromMessageType(messageType),
 			SERVER_CESPI
 			);
@@ -398,7 +398,7 @@ SIM800L_error_t SEND_DATA_GPRS_TASK(message_t messageType, uint32_t *distanceSam
 	uint32_t errors_close = 0;
 	uint32_t errors_shut = 0;
 	uint8_t trying = 1;
-	SIM800L_state_t state = INIT_SIM800L;
+	SIM800L_state_t state = TRY_TO_SEND;
 	SIM800L_error_t exitCode;
 	static uint8_t HTTP_BUFFER[256];
 
@@ -406,40 +406,23 @@ SIM800L_error_t SEND_DATA_GPRS_TASK(message_t messageType, uint32_t *distanceSam
 	{
 		switch(state)
 		{
-
-			case INIT_SIM800L:
-				SIM800L_INIT();
-				state = CHECK_STATUS_SIM800L;
-				break;
 			case RESET_SIM800L:
 				SIM800L_RESET();
 				state = CHECK_STATUS_SIM800L;
 				break;
+
+
 			case CHECK_STATUS_SIM800L:
 				if (SIM800L_CHECK_STATUS())
 				{
-					errors_network = 0;
 					state = CONNECT_GPRS;
 				}
 				else
 				{
-					if(++errors_network == CHECK_STATUS_MAX_RETRIES)
-					{
-						errors_network = 0;
-						if(reboots >= SIM800L_MAX_FULL_REBOOTS )
-						{
-							exitCode = SIM800L_NO_NETWORK;
-							state = TURN_OFF_SIM800L;
-						}
-						else
-						{
-							state = RESET_SIM800L;
-							reboots++;
-
-						}
-					}
+					state = RESET_SIM800L;
 				}
 				break;
+
 
 			case CONNECT_GPRS:
 				if (SIM800L_CONNECT_GPRS())
@@ -473,19 +456,11 @@ SIM800L_error_t SEND_DATA_GPRS_TASK(message_t messageType, uint32_t *distanceSam
 					if(++errors_gprs == CONNECT_GPRS_MAX_RETRIES)
 					{
 						errors_gprs = 0;
-						if(partialReboots >= SIM800L_MAX_PARTIAL_REBOOTS  )
-						{
-							exitCode = SIM800L_NO_GPRS;
-							state = TURN_OFF_SIM800L;
-						}
-						else
-						{
-							state = CHECK_STATUS_SIM800L;
-							partialReboots++;
-						}
+						state = CHECK_STATUS_SIM800L;
 					}
 				}
 				break;
+
 
 			case ESTABLISH_TCP_CONNECTION:
 				if (SIM800L_ESTABLISH_TCP_CONNECTION())
@@ -498,16 +473,7 @@ SIM800L_error_t SEND_DATA_GPRS_TASK(message_t messageType, uint32_t *distanceSam
 					if(++errors_tcp == TCP_MAX_RETRIES)
 					{
 						errors_tcp = 0;
-						if(partialReboots >= SIM800L_MAX_PARTIAL_REBOOTS )
-						{
-							exitCode = SIM800L_CANT_CONNECT_SERVER;
-							state = TURN_OFF_SIM800L;
-						}
-						else
-						{
-							state = CONNECT_GPRS;
-							partialReboots++;
-						}
+						state = CONNECT_GPRS;
 					}
 				}
 				break;
@@ -523,16 +489,7 @@ SIM800L_error_t SEND_DATA_GPRS_TASK(message_t messageType, uint32_t *distanceSam
 					if(++errors_ready_to_send == TRY_TO_SEND_MAX_RETRIES)
 					{
 						errors_ready_to_send = 0;
-						if(partialReboots >= SIM800L_MAX_PARTIAL_REBOOTS )
-						{
-							exitCode = SIM800L_CANT_CONNECT_SERVER;
-							state = TURN_OFF_SIM800L;
-						}
-						else
-						{
-							state = CONNECT_GPRS;
-							partialReboots++;
-						}
+						state = CONNECT_GPRS;
 					}
 				}
 				break;
@@ -549,54 +506,12 @@ SIM800L_error_t SEND_DATA_GPRS_TASK(message_t messageType, uint32_t *distanceSam
 					if(++errors_send == SEND_MAX_RETRIES)
 					{
 						errors_send = 0;
-						if((partialReboots >= SIM800L_MAX_PARTIAL_REBOOTS))
-						{
-							exitCode = SIM800L_CANT_SEND_TO_SERVER;
-							state = TURN_OFF_SIM800L;
-						}
-						else
-						{
-							state = CONNECT_GPRS;
-							partialReboots++;
-						}
+						state = ESTABLISH_TCP_CONNECTION;
 					}
 				}
 				break;
 
-			case CLOSE_CONNECTION:
-				if (SIM800L_CLOSE_TCP_CONNECTION())
-				{
-					errors_close = 0;
-					state = TURN_OFF_SIM800L;
-				}
-				else
-				{
-					if(++errors_close == CLOSE_TCP_MAX_RETRIES)
-					{
-						errors_close = 0;
-						state = SHUT_CONNECTION;
-					}
-				}
-				break;
-
-			case	SHUT_CONNECTION:
-				if (SIM800L_CIPSHUT())
-				{
-					errors_shut = 0;
-					state = TURN_OFF_SIM800L;
-				}
-				else
-				{
-					if(++errors_shut == SHUT_MAX_RETRIES)
-					{
-						errors_shut = 0;
-						state = TURN_OFF_SIM800L;
-					}
-				}
-				break;
-
-			case TURN_OFF_SIM800L:
-				SIM800L_DEINIT();
+			case SEND_OK:
 				trying = 0;
 				break;
 		}
@@ -625,8 +540,8 @@ void Application()
 	static MMA8451_state_t boardState;
 	uint8_t fullAlarmSent = 0, fireAlarmSent = 0, fallAlarmSent = 0;
 	uint8_t i;
-
-
+	uint8_t trying = 1;
+	SIM800L_state_t state = INIT_SIM800L;
 
 	while(1)
 	{
@@ -635,6 +550,90 @@ void Application()
 			case RECEIVE_CONFIG:
 				RECEIVE_CONFIG_TASK(&sendPeriodHours,&samplesPerHour,&minutesLeaveIdle);
 				Init();
+				while (trying){
+					switch(state){
+						case INIT_SIM800L:
+							SIM800L_INIT();
+							state = CHECK_STATUS_SIM800L;
+							break;
+
+						case RESET_SIM800L:
+							SIM800L_RESET();
+							state = CHECK_STATUS_SIM800L;
+							break;
+
+
+						case CHECK_STATUS_SIM800L:
+							if (SIM800L_CHECK_STATUS())
+							{
+								state = CONNECT_GPRS;
+							}
+							else
+							{
+								state = RESET_SIM800L;
+							}
+							break;
+
+
+						case CONNECT_GPRS:
+							if (SIM800L_CONNECT_GPRS())
+							{
+								errors_gprs = 0;
+								switch(messageType)
+								{
+									case SAMPLES:
+										CREATE_HTTP_SAMPLES(HTTP_BUFFER,strlen(HTTP_BUFFER),distanceSamplesArray,samplesNumber,messageType);
+										break;
+
+									case FULL_ALARM:
+										CREATE_HTTP_ALERT(HTTP_BUFFER,strlen(HTTP_BUFFER),messageType);
+										break;
+
+									case FIRE_ALARM:
+										CREATE_HTTP_ALERT(HTTP_BUFFER,strlen(HTTP_BUFFER),messageType);
+										break;
+
+									case FALL_ALARM:
+										CREATE_HTTP_ALERT(HTTP_BUFFER,strlen(HTTP_BUFFER),messageType);
+										break;
+
+									default:
+										break;
+								}
+								state = ESTABLISH_TCP_CONNECTION;
+							}
+							else
+							{
+								if(++errors_gprs == CONNECT_GPRS_MAX_RETRIES)
+								{
+									errors_gprs = 0;
+									state = CHECK_STATUS_SIM800L;
+								}
+							}
+							break;
+
+
+						case ESTABLISH_TCP_CONNECTION:
+							if (SIM800L_ESTABLISH_TCP_CONNECTION())
+							{
+								errors_tcp = 0;
+								state = TRY_TO_SEND;
+							}
+							else
+							{
+								if(++errors_tcp == TCP_MAX_RETRIES)
+								{
+									errors_tcp = 0;
+									state = CONNECT_GPRS;
+								}
+							}
+							break;
+
+
+
+					}
+				}
+
 				currentState = IDLE;
 				break;
 
@@ -691,7 +690,7 @@ void Application()
 							CONSOLE_SEND("FALL ALARM\r\n",12);
 							messageType = FALL_ALARM;
 							currentState = SEND_DATA;
-							Mma8451_position.state=MMA8451_FALL;
+							Mma8451q.position=MMA8451_FALL;
 						}
 					}
 				}
@@ -699,7 +698,7 @@ void Application()
 				{
 					/*CONTAINER AGAIN IN ITS RIGHT PLACE*/
 					fallCounter=0;
-					Mma8451_position.state=MMA8451_OK;
+					Mma8451q.position=MMA8451_OK;
 					if(fallAlarmSent)
 					{
 						fallAlarmSent = 0;
