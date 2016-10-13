@@ -22,7 +22,7 @@ static char * stringFromMessageType(message_t messageType)
     return messageTypeAsString[messageType];
 }
 
-void CREATE_SMS_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSamplesArray,uint32_t sendPeriodHours)
+void CREATE_SMS_SAMPLES(uint8_t *buffer,uint32_t size,message_t messageType)
 {
 	int i;
 
@@ -31,6 +31,8 @@ void CREATE_SMS_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSamples
 		buffer[i] = '\0';
 	}
 
+
+
 	sprintf(buffer,"imei=%s\nbattery_voltage=%s\nbattery_percentage=%s\ntemperature=%s\nsignal_strength=%s\nsample0=%s\norientation=%s\nmessage_type=%s\r\n\r\n\x1A",
 			SIM800L.Imei,
 			SIM800L.BatteryVoltageMv,
@@ -38,9 +40,10 @@ void CREATE_SMS_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSamples
 			Lm35.Temperature,
 			SIM800L.Signal,
 			Mb7360.Distance,
-			Mma8451_position.state,
+			Mma8451q.position,
 			stringFromMessageType(messageType)
 	);
+
 
 
 }
@@ -63,7 +66,7 @@ void CREATE_SMS_ALERT(uint8_t *buffer,uint32_t size,message_t messageType)
 			Lm35.Temperature,
 			SIM800L.Signal,
 			Mb7360.Distance,
-			Mma8451_position.state,
+			Mma8451q.position,
 			stringFromMessageType(messageType)
 	);
 
@@ -92,7 +95,7 @@ void CREATE_HTTP_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSample
 				Lm35.Temperature,
 				SIM800L.Signal,
 				Mb7360.Distance,
-				Mma8451_position.state,
+				Mma8451q.position,
 				stringFromMessageType(messageType),
 				SERVER_CESPI
 				);
@@ -142,7 +145,7 @@ void CREATE_HTTP_ALERT(uint8_t *buffer,uint32_t size,message_t messageType)
 			Lm35.Temperature,
 			SIM800L.Signal,
 			Mb7360.Distance,
-			Mma8451_position.state,
+			Mma8451q.position,
 			stringFromMessageType(messageType),
 			SERVER_CESPI
 			);
@@ -305,7 +308,7 @@ SIM800L_error_t SEND_DATA_SMS_TASK(message_t messageType, uint32_t *distanceSamp
 					switch(messageType)
 					{
 						case SAMPLES:
-							CREATE_SMS_SAMPLES(SMS_BUFFER,strlen(SMS_BUFFER),distanceSamplesArray,samplesNumber);
+							CREATE_SMS_SAMPLES(SMS_BUFFER,strlen(SMS_BUFFER),messageType);
 							break;
 
 						case FULL_ALARM:
@@ -691,7 +694,7 @@ void Application()
 							CONSOLE_SEND("FALL ALARM\r\n",12);
 							messageType = FALL_ALARM;
 							currentState = SEND_DATA;
-							Mma8451_position.state=MMA8451_FALL;
+							Mma8451q.position=MMA8451_FALL;
 						}
 					}
 				}
@@ -699,7 +702,7 @@ void Application()
 				{
 					/*CONTAINER AGAIN IN ITS RIGHT PLACE*/
 					fallCounter=0;
-					Mma8451_position.state=MMA8451_OK;
+					Mma8451q.position=MMA8451_OK;
 					if(fallAlarmSent)
 					{
 						fallAlarmSent = 0;

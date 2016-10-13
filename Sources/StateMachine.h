@@ -217,12 +217,11 @@ void CREATE_HTTP_ALERT(uint8_t *buffer,uint32_t size,message_t messageType);
  * @author Valentin Korenblit
  * @param buffer Buffer where the string is going to be stored
  * @param size Size of buffer
- * @param distanceSamplesArray  Array where samples are stored
- * @param sendPeriodHours Number of samples to be sent = 1 per hour
+ * @param messageType Type of alert: message_t
  * @return void
  *
  */
-void CREATE_SMS_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSamplesArray,uint32_t sendPeriodHours);
+void CREATE_SMS_SAMPLES(uint8_t *buffer,uint32_t size,message_t messageType);
 /**
  *
  * This method creates the string to be sent through SMS. Values are sent in each line. Alert => only last measures

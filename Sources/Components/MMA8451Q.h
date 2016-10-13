@@ -43,6 +43,12 @@
  * @brief Struct for MMA8451Q properties
  *
  */
+
+typedef enum{
+	MMA8451_OK,
+	MMA8451_FALL
+}MMA8451_state_t;
+
 typedef struct{
 	accel_dev_t accDev;
 	accel_dev_interface_t accDevice;
@@ -52,16 +58,10 @@ typedef struct{
 	int16_t yData;
 	int16_t xAngle;
 	int16_t yAngle;
+	MMA8451_state_t position;
 }mma8451q_t;
 
-typedef struct{
-	MMA8451_state_t state = MMA8451_OK;
-}mma8451_position;
 
-typedef enum{
-	MMA8451_OK,
-	MMA8451_FALL
-}MMA8451_state_t;
 
 typedef enum{
 	MMA8451_VERTICAL,
