@@ -22,7 +22,7 @@ static char * stringFromMessageType(message_t messageType)
     return messageTypeAsString[messageType];
 }
 
-void CREATE_SMS_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSamplesArray,uint32_t sendPeriodHours)
+void CREATE_SMS_SAMPLES(uint8_t *buffer,uint32_t size,message_t messageType)
 {
 	int i;
 
@@ -305,7 +305,7 @@ SIM800L_error_t SEND_DATA_SMS_TASK(message_t messageType, uint32_t *distanceSamp
 					switch(messageType)
 					{
 						case SAMPLES:
-							CREATE_SMS_SAMPLES(SMS_BUFFER,strlen(SMS_BUFFER),distanceSamplesArray,samplesNumber);
+							CREATE_SMS_SAMPLES(SMS_BUFFER,strlen(SMS_BUFFER),messageType);
 							break;
 
 						case FULL_ALARM:
@@ -398,7 +398,7 @@ SIM800L_error_t SEND_DATA_GPRS_TASK(message_t messageType, uint32_t *distanceSam
 	uint32_t errors_close = 0;
 	uint32_t errors_shut = 0;
 	uint8_t trying = 1;
-	SIM800L_state_t state = TRY_TO_SEND;
+	SIM800L_state_t state = ESTABLISH_TCP_CONNECTION;
 	SIM800L_error_t exitCode;
 	static uint8_t HTTP_BUFFER[256];
 
@@ -499,7 +499,7 @@ SIM800L_error_t SEND_DATA_GPRS_TASK(message_t messageType, uint32_t *distanceSam
 				{
 					errors_send = 0;
 					exitCode = SIM800L_SUCCESS_GPRS;
-					state = CLOSE_CONNECTION;
+					state = SEND_OK;
 				}
 				else
 				{
@@ -528,6 +528,9 @@ void Init(){
 void Application()
 {
 	uint32_t minutes=0, hours=0, samples=0, arrayIndex=0;
+	uint32_t errors_network = 0;
+	uint32_t errors_gprs = 0;
+	uint32_t errors_tcp = 0;
 	static state_t currentState = RECEIVE_CONFIG;
 	static uint32_t sendPeriodHours, samplesPerHour,minutesLeaveIdle,fallCounter = 0;
 	static uint32_t distanceSamplesArray[MAX_ALLOWED_SEND_PERIOD_HOURS];
@@ -550,6 +553,11 @@ void Application()
 			case RECEIVE_CONFIG:
 				RECEIVE_CONFIG_TASK(&sendPeriodHours,&samplesPerHour,&minutesLeaveIdle);
 				Init();
+
+				/******************************************
+				 * Me conecto hasta conexion TCP
+				 *****************************************/
+
 				while (trying){
 					switch(state){
 						case INIT_SIM800L:
@@ -579,27 +587,6 @@ void Application()
 							if (SIM800L_CONNECT_GPRS())
 							{
 								errors_gprs = 0;
-								switch(messageType)
-								{
-									case SAMPLES:
-										CREATE_HTTP_SAMPLES(HTTP_BUFFER,strlen(HTTP_BUFFER),distanceSamplesArray,samplesNumber,messageType);
-										break;
-
-									case FULL_ALARM:
-										CREATE_HTTP_ALERT(HTTP_BUFFER,strlen(HTTP_BUFFER),messageType);
-										break;
-
-									case FIRE_ALARM:
-										CREATE_HTTP_ALERT(HTTP_BUFFER,strlen(HTTP_BUFFER),messageType);
-										break;
-
-									case FALL_ALARM:
-										CREATE_HTTP_ALERT(HTTP_BUFFER,strlen(HTTP_BUFFER),messageType);
-										break;
-
-									default:
-										break;
-								}
 								state = ESTABLISH_TCP_CONNECTION;
 							}
 							else
@@ -617,7 +604,7 @@ void Application()
 							if (SIM800L_ESTABLISH_TCP_CONNECTION())
 							{
 								errors_tcp = 0;
-								state = TRY_TO_SEND;
+								trying=0;
 							}
 							else
 							{
@@ -633,6 +620,10 @@ void Application()
 
 					}
 				}
+
+				/******************************************
+				 * FIN ---  Me conecto hasta conexion TCP
+				 *****************************************/
 
 				currentState = IDLE;
 				break;
@@ -752,7 +743,8 @@ void Application()
 					samples = 0;
 					distanceSamplesArray[arrayIndex++] = distance;
 					/*SEND PERIOD HOUR LAPSE: TIME TO SEND DATA*/
-					if(++hours == sendPeriodHours)
+					if(1)
+					//if(++hours == sendPeriodHours)
 					{
 						hours = 0;
 						arrayIndex = 0;

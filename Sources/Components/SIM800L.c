@@ -901,7 +901,7 @@ uint8_t SIM800L_FIND_WORD_IN_BUFFER(uint8_t *word, uint32_t wordSize){
 	if(strstr(SIM800L.UART1_RxBuffer, word) != NULL) {
 	    ok=1;
 	}
-	//CONSOLE_SEND(&SIM800L.UART1_RxBuffer,strlen(SIM800L.UART1_RxBuffer));
+CONSOLE_SEND(&SIM800L.UART1_RxBuffer,strlen(SIM800L.UART1_RxBuffer));
 	return ok;
 }
 

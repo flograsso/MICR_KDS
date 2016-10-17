@@ -41,7 +41,7 @@
 	 * @attention SET TO ONE MINUTE (60000000) => MÁX TIME SLEEPING
 	 *
 	 */
-	#define LPTMR_INTERRUPT_PERIOD_US		1000000 /*1 SEC - DEBUGGING TIME*/
+	#define LPTMR_INTERRUPT_PERIOD_US		500000 /*1 SEC - DEBUGGING TIME*/
 
 	/**
 	 * @brief Time for LPTMR config timeout interrupt in microseconds
@@ -222,7 +222,7 @@ void CREATE_HTTP_ALERT(uint8_t *buffer,uint32_t size,message_t messageType);
  * @return void
  *
  */
-void CREATE_SMS_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSamplesArray,uint32_t sendPeriodHours);
+void CREATE_SMS_SAMPLES(uint8_t *buffer,uint32_t size,message_t messageType);
 /**
  *
  * This method creates the string to be sent through SMS. Values are sent in each line. Alert => only last measures
