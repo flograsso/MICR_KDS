@@ -587,7 +587,7 @@ void Application()
 							if (SIM800L_CONNECT_GPRS())
 							{
 								errors_gprs = 0;
-								state = ESTABLISH_TCP_CONNECTION;
+								trying=0;
 							}
 							else
 							{
@@ -598,25 +598,6 @@ void Application()
 								}
 							}
 							break;
-
-
-						case ESTABLISH_TCP_CONNECTION:
-							if (SIM800L_ESTABLISH_TCP_CONNECTION())
-							{
-								errors_tcp = 0;
-								trying=0;
-							}
-							else
-							{
-								if(++errors_tcp == TCP_MAX_RETRIES)
-								{
-									errors_tcp = 0;
-									state = CONNECT_GPRS;
-								}
-							}
-							break;
-
-
 
 					}
 				}

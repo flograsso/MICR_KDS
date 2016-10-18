@@ -254,7 +254,7 @@ uint8_t SIM800L_HTTP_SEND(uint8_t *buffer)
 	uint8_t *word2="SEND FAIL";
 
 	SIM800L_SEND_COMMAND(buffer,strlen(buffer));
-	OSA_TimeDelay(9000);
+	OSA_TimeDelay(18000);
 
 	if(SIM800L_FIND_WORD_IN_BUFFER(word,strlen(word)) )
 	{
@@ -986,11 +986,11 @@ uint8_t SIM800L_CHECK_STATUS()
 	{
 		ok=0;
 	}
-	/*ATE0*/
+	/*ATE0
 	if (!SIM800L_IS_ECHO_DISABLED())
 	{
 		ok=0;
-	}
+	}*/
 	/*AT+CPIN?*/
 	if( !SIM800L_IS_SIM_READY())
 	{
@@ -1029,11 +1029,19 @@ uint8_t SIM800L_CONNECT_GPRS()
 {
 	uint8_t ok=1;
 
-	/*AT_CGATT=1*/
+	/*AT_CGATT?*/
+	if (!SIM800L_IS_ATTACHED_TO_GPRS())
+	{
+		ok=0;
+	}
+
+	/*
+	/*AT_CGATT=1
 	if (!SIM800L_GPRS_ATTACHMENT_OK())
 	{
 		ok=0;
 	}
+	*/
 	/*AT+CIPSHUT*/
 	if (!SIM800L_CIPSHUT())
 	{
