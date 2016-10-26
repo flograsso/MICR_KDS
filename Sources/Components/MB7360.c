@@ -109,12 +109,19 @@ uint16_t MB7360_GET_DISTANCE_MM()
 */
 
 	 /*CONVERT RAW VALUE TO DISTANCE*/
-
 	 sprintf(Mb7360.Distance,"%d",distance);
+
+	 /************************
+	  *****SHOW DISTANCE******
+	  * **********************/
+	 /*****************************************************/
+	 /*
 	 CONSOLE_SEND("MB7360 DISTANCE VALUE NO AVG: ",30);
 	 CONSOLE_SEND(Mb7360.Distance,strlen(Mb7360.Distance));
 	 CONSOLE_SEND("mm\r\n",4);
+	*/
 
+	 /*****************************************************/
 	 /*
 	 UTILITIES_FLOAT_TO_STR(&centimeters,centimetersStr,2);
 
