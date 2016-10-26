@@ -27,8 +27,8 @@
       </GenExtraFiles>
       <GenExtraFileSrcDir8>Repositories\lib\doxygen\</GenExtraFileSrcDir8>
       <XtraAge0>1220507257</XtraAge0>
-      <XtraAge1>1229357139</XtraAge1>
-      <XtraAge2>1229357139</XtraAge2>
+      <XtraAge1>1230656185</XtraAge1>
+      <XtraAge2>1230656185</XtraAge2>
       <XtraAge3>1221548314</XtraAge3>
       <GenExtraFileType8>5</GenExtraFileType8>
       <GenExtraFileType7>4</GenExtraFileType7>
@@ -902,7 +902,7 @@
     </GenFiles>
     <SignalListFile />
     <DestinationCompiler>GNUC</DestinationCompiler>
-    <ProjectModificationStamp>110</ProjectModificationStamp>
+    <ProjectModificationStamp>111</ProjectModificationStamp>
   </Options>
   <CpuID_1>
     <Generated>true</Generated>
@@ -1378,8 +1378,8 @@
     <GenComponentVersion>1.2.0</GenComponentVersion>
     <GenDriverVersion>1.4</GenDriverVersion>
     <GenEventModule />
-    <HeaderAge>1229357139</HeaderAge>
-    <CodeAge>1229357139</CodeAge>
+    <HeaderAge>1230656185</HeaderAge>
+    <CodeAge>1230656185</CodeAge>
     <AsemblAge>-1</AsemblAge>
     <GenNumMethods>41</GenNumMethods>
     <hardware_init>true</hardware_init>
@@ -1440,7 +1440,7 @@
       <MethodType>method</MethodType>
       <ModuleType>Code</ModuleType>
       <LineBeg>977</LineBeg>
-      <LineEnd>1346</LineEnd>
+      <LineEnd>1348</LineEnd>
     </MethodPos>
     <GenExtraFilesCount>2</GenExtraFilesCount>
     <ExtraFile0>Generated_Code\board.h</ExtraFile0>

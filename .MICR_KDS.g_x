@@ -177,11 +177,11 @@
       <File Name="SDK/platform/drivers/src/gpio/fsl_gpio_common.c" FileDate="2016-05-31, 14:51:50" FileAge="1464717110000" FileType="1048576" CompNumb="0" />
       <File Name="SDK/platform/hal/src/smc/fsl_smc_hal.c" FileDate="2016-05-31, 14:51:50" FileAge="1464717110000" FileType="1048576" CompNumb="55" />
       <File Name="SDK/platform/hal/src/sim/MKL25Z4/fsl_sim_hal_MKL25Z4.h" FileDate="2016-05-31, 14:51:50" FileAge="1464717110000" FileType="1048576" CompNumb="0" />
-      <File Name="Generated_Code/hardware_init.c" FileDate="2016-10-06, 16:02:38" FileAge="1475780558451" FileType="45637" CompNumb="7" />
+      <File Name="Generated_Code/hardware_init.c" FileDate="2016-10-26, 10:21:50" FileAge="1477488110190" FileType="45637" CompNumb="7" />
       <File Name="SDK/platform/hal/src/port/fsl_port_hal.c" FileDate="2016-05-31, 14:51:50" FileAge="1464717110000" FileType="1048576" CompNumb="0" />
       <File Name="SDK/platform/drivers/src/uart/fsl_uart_driver.c" FileDate="2016-05-31, 14:51:50" FileAge="1464717110000" FileType="1048576" CompNumb="21" />
       <File Name="Documentation/MICR_KDS.txt" FileDate="2016-09-01, 15:02:14" FileAge="1472752934457" FileType="3072" />
-      <File Name="Generated_Code/board.h" FileDate="2016-10-06, 16:02:38" FileAge="1475780558477" FileType="45637" CompNumb="7" />
+      <File Name="Generated_Code/board.h" FileDate="2016-10-26, 10:21:50" FileAge="1477488110240" FileType="45637" CompNumb="7" />
       <File Name="Generated_Code/LPTMR_0.h" FileDate="2016-06-15, 11:08:52" FileAge="1465999732000" FileType="45637" CompNumb="44" />
       <File Name="Generated_Code/pwrMan1.h" FileDate="2016-06-15, 11:08:52" FileAge="1465999732000" FileType="45637" CompNumb="54" />
       <File Name="SDK/platform/hal/src/sim/MKL25Z4/fsl_sim_hal_MKL25Z4.c" FileDate="2016-05-31, 14:51:50" FileAge="1464717110000" FileType="1048576" CompNumb="0" />
@@ -238,10 +238,10 @@
       <File Name="SDK/platform/hal/src/mcg/fsl_mcg_hal_modes.c" FileDate="2016-05-31, 14:51:50" FileAge="1464717110000" FileType="1048576" CompNumb="0" />
       <File Name="SDK/platform/devices/MKL25Z4/startup/system_MKL25Z4.c" FileDate="2016-05-31, 14:51:50" FileAge="1464717110000" FileType="1048576" CompNumb="1" />
       <File Name="SDK/platform/hal/inc/fsl_rcm_hal.h" FileDate="2016-05-31, 14:51:50" FileAge="1464717110000" FileType="1048576" CompNumb="57" />
-      <File Name="Generated_Code/pin_init.h" FileDate="2016-10-06, 16:02:38" FileAge="1475780558503" FileType="45637" CompNumb="7" />
+      <File Name="Generated_Code/pin_init.h" FileDate="2016-10-26, 10:21:50" FileAge="1477488110257" FileType="45637" CompNumb="7" />
       <File Name="Documentation/doxygen/pex.css" FileDate="2016-05-31, 14:51:50" FileAge="1464717110000" FileType="16384" CompNumb="1" />
       <File Name="SDK/platform/drivers/src/i2c/fsl_i2c_common.c" FileDate="2016-06-13, 11:33:40" FileAge="1465828420000" FileType="1048576" CompNumb="75" />
-      <File Name="Generated_Code/pin_init.c" FileDate="2016-10-06, 16:02:38" FileAge="1475780558494" FileType="45637" CompNumb="7" />
+      <File Name="Generated_Code/pin_init.c" FileDate="2016-10-26, 10:21:50" FileAge="1477488110282" FileType="45637" CompNumb="7" />
       <File Name="SDK/platform/system/src/power/fsl_power_manager_common.h" FileDate="2016-05-31, 14:51:50" FileAge="1464717110000" FileType="1048576" CompNumb="54" />
       <File Name="Project_Settings/Linker_Files/ProcessorExpert.ld" FileDate="2016-06-15, 11:08:52" FileAge="1465999732000" FileType="8" CompNumb="1" />
       <File Name="SDK/platform/drivers/src/rtc/fsl_rtc_common.c" FileDate="2016-05-31, 14:51:50" FileAge="1464717110000" FileType="1048576" CompNumb="2" />
@@ -254,11 +254,11 @@
       <File Name="Generated_Code/osa1.h" FileDate="2016-06-15, 11:08:52" FileAge="1465999732000" FileType="45637" CompNumb="12" />
       <File Name="Generated_Code/osa1.c" FileDate="2016-06-15, 11:08:52" FileAge="1465999732000" FileType="45637" CompNumb="12" />
       <File Name="SDK/platform/devices/startup.h" FileDate="2016-05-31, 14:51:50" FileAge="1464717110000" FileType="1048576" CompNumb="1" />
-      <File Name="ProjectInfo.xml" FileDate="2016-09-01, 15:02:14" FileAge="1472752934426" FileType="45637" />
+      <File Name="ProjectInfo.xml" FileDate="2016-10-20, 14:29:25" FileAge="1476984565775" FileType="45637" />
       <File Name="SDK/platform/CMSIS/Include/arm_common_tables.h" FileDate="2016-05-31, 14:51:50" FileAge="1464717110000" FileType="1048576" CompNumb="1" />
       <File Name="SDK/platform/devices/startup.c" FileDate="2016-05-31, 14:51:50" FileAge="1464717110000" FileType="1048576" CompNumb="1" />
       <File Name="SDK/platform/devices/fsl_device_registers.h" FileDate="2016-05-31, 14:51:50" FileAge="1464717110000" FileType="1048576" CompNumb="1" />
-      <File Name="Sources/main.c" FileDate="2016-09-21, 10:55:14" FileAge="1474466114876" FileType="128" />
+      <File Name="Sources/main.c" FileDate="2016-10-20, 17:09:13" FileAge="1476994153339" FileType="128" />
       <File Name="SDK/platform/osa/inc/fsl_os_abstraction.h" FileDate="2016-05-31, 14:51:50" FileAge="1464717110000" FileType="1048576" CompNumb="12" />
       <File Name="Sources/Events.h" FileDate="2016-09-05, 14:47:17" FileAge="1473097637349" FileType="131328" />
       <File Name="Generated_Code/SDK/platform/devices/MKL25Z4/startup/system_MKL25Z4.h" FileDate="2016-05-31, 14:51:50" FileAge="1464717110000" FileType="45637" CompNumb="2" />
@@ -301,5 +301,5 @@
       <File Name="SDK/platform/drivers/src/lpsci/fsl_lpsci_common.c" FileDate="2016-05-31, 14:51:50" FileAge="1464717110000" FileType="1048576" CompNumb="19" />
     </GeneratedByPE>
   </GeneratedFilesList>
-  <CodeGenReference>81</CodeGenReference>
+  <CodeGenReference>90</CodeGenReference>
 </CodeGenerationInfo>

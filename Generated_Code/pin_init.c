@@ -7,7 +7,7 @@
 **     Version     : Component 1.2.0, Driver 1.4, CPU db: 3.00.000
 **     Repository  : KSDK 1.3.0
 **     Compiler    : GNU C Compiler
-**     Date/Time   : 2016-10-06, 16:02, # CodeGen: 71
+**     Date/Time   : 2016-10-26, 10:21, # CodeGen: 88
 **     Abstract    :
 **
 **     Settings    :
@@ -675,7 +675,7 @@
 **                Drive strength                           : <Automatic>
 **                Passive filter                           : <Automatic>
 **                Pull select                              : <Automatic>
-**                Pull enable                              : <Automatic>
+**                Pull enable                              : Disabled
 **              Pin 45: ADC0_SE12/TSI0_CH7/PTB2/I2C0_SCL/TPM2_CH0: 
 **                Custom name, Signal name                 : J10_6
 **                Slew rate                                : <Automatic>
@@ -988,6 +988,7 @@ void init_adc_pins(uint32_t instance)
   /* Affects PORTB_PCR0 register */
   PORT_HAL_SetMuxMode(PORTB,0UL,kPortPinDisabled);
   /* Affects PORTB_PCR1 register */
+  PORT_HAL_SetPullCmd(PORTB,1UL,false);
   PORT_HAL_SetMuxMode(PORTB,1UL,kPortPinDisabled);
   /* Affects PORTB_PCR2 register */
   PORT_HAL_SetMuxMode(PORTB,2UL,kPortPinDisabled);
@@ -1263,6 +1264,7 @@ void init_tsi_pins(uint32_t instance)
   /* Affects PORTB_PCR0 register */
   PORT_HAL_SetMuxMode(PORTB,0UL,kPortPinDisabled);
   /* Affects PORTB_PCR1 register */
+  PORT_HAL_SetPullCmd(PORTB,1UL,false);
   PORT_HAL_SetMuxMode(PORTB,1UL,kPortPinDisabled);
   /* Affects PORTB_PCR2 register */
   PORT_HAL_SetMuxMode(PORTB,2UL,kPortPinDisabled);
