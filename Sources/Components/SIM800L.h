@@ -213,9 +213,11 @@ const char *AT_CPOWD_1="AT+CPOWD=1\r\n";
 const char *AT_CMTE="AT+CMTE?\r\n";
 const char *AT_CBTE="AT+CBTE?\r\n";
 const char *AT_CGATT_1="AT+CGATT=1\r\n";
+const char *AT_CGATT_0="AT+CGATT=0\r\n";
 const char *AT_CGATT="AT+CGATT?\r\n";
 const char *AT_CSTT="AT+CSTT?\r\n";
 const char *AT_CSTT_CMNET="AT+CSTT=\"CMNET\"\r\n";
+//const char *AT_CSTT_CMNET="AT+CSTT=\"internet.gprs.com.ar\"\r\n";
 const char *AT_CIICR="AT+CIICR\r\n";
 const char *AT_CIFSR="AT+CIFSR\r\n";
 const char *AT_CIPSHUT="AT+CIPSHUT\r\n";
@@ -223,15 +225,22 @@ const char *AT_CIPCLOSE="AT+CIPCLOSE\r\n";
 const char *AT_CIPCLOSE_1="AT+CIPCLOSE=1\r\n";
 const char *AT_CIPSTATUS="AT+CIPSTATUS\r\n";
 const char *AT_CIPSEND="AT+CIPSEND\r\n";
-
+const char *AT_MUX_0="AT+CIPMUX=0\r\n";
+const char *ENTER="\r\n";
 
 /**
  * @brief Start TCP connection with CESPI
  *
  */
 const char *AT_CIPSTART_CESPI = "AT+CIPSTART=\"TCP\",\"163.10.181.17\",80\r\n";
+//const char *AT_CIPSTART_CESPI = "AT+CIPSTART=\"TCP\",\"dev.teubi.co\",80\r\n";
+//const char *AT_CIPSTART_CESPI = "AT+CIPSTART=\"TCP\",\"gmotion.com.ar\",80\r\n";
+
+
 const char *SERVICE_ROUTE_CESPI = "/containers-core/sensor/save";
 const char *SERVER_CESPI = "163.10.181.17";
+
+
 
 const char *AT_CSCS_GSM="AT+CSCS=\"GSM\"\r\n";
 const char *AT_CMGF_1="AT+CMGF=1\r\n";
@@ -578,4 +587,7 @@ uint8_t SIM800L_SELECT_TE_CHAR_SET_GSM();
  *
  */
 uint8_t SIM800L_PREPARE_SMS();
+void SIM800L_SEND_ENTER();
+void SIM800L_MUX();
+uint8_t SIM800L_GET_IP_STATUS();
 #endif /* SOURCES_COMPONENTS_SIM800L_H_ */
