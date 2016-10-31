@@ -98,6 +98,7 @@ void CREATE_HTTP_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSample
 				);
 	*/
 
+
 	sprintf(buffer,"GET %s?imei=%s&battery_voltage=%s&battery_percentage=%s&temperature=%s&signal_strength=%s&samples_number=%d&message_type=%s",
 			SERVICE_ROUTE_CESPI,
 			SIM800L.Imei,
@@ -109,6 +110,8 @@ void CREATE_HTTP_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSample
 			stringFromMessageType(messageType)
 			);
 
+
+
 	/*BORRAR TODO ESTO -->*/
 	for(i=0;i<sendPeriodHours;i++)
 	{
@@ -119,6 +122,17 @@ void CREATE_HTTP_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSample
 
 	sprintf(buffer+strlen(buffer)," HTTP/1.1\r\nHost: %s\r\n\r\n\x1A",SERVER_CESPI);
 	/*<-- BORRAR TODO ESTO*/
+
+
+	/*
+	for(i=0;i<size;i++)
+	{
+		buffer[i] = '\0';
+	}
+	sprintf(buffer,"GET /connection.php?imei=0139111155555555555555555555559000647787&battery_voltage=4127&battery_percentage=094&temperature=23.24&signal_strength=25&samples_number=0&message_type=SAMPLES&sample0=111 HTTP/1.1\r\nHost: gmotion.com.ar\r\n\r\n\x1A");
+
+	*/
+
 }
 
 
@@ -413,6 +427,13 @@ SIM800L_error_t SEND_DATA_GPRS_TASK(message_t messageType, uint32_t *distanceSam
 
 
 			case CHECK_STATUS_SIM800L:
+
+				/*LED RED ON INDICATES SIM INITIALIZATION*/
+				/*TURN OFF BLUE LED*/
+				GPIO_DRV_SetPinOutput(LEDRGB_BLUE);
+				/*TURN ON RED LED*/
+				GPIO_DRV_ClearPinOutput(LEDRGB_RED);
+
 				if (SIM800L_CHECK_STATUS())
 				{
 					state = CONNECT_GPRS;
@@ -428,6 +449,47 @@ SIM800L_error_t SEND_DATA_GPRS_TASK(message_t messageType, uint32_t *distanceSam
 				if (SIM800L_CONNECT_GPRS())
 				{
 					errors_gprs = 0;
+					state = ESTABLISH_TCP_CONNECTION;
+				}
+				else
+				{
+					if(++errors_gprs == CONNECT_GPRS_MAX_RETRIES)
+					{
+						errors_gprs = 0;
+						state = CHECK_STATUS_SIM800L;
+					}
+				}
+				break;
+
+
+			case ESTABLISH_TCP_CONNECTION:
+
+				/*LED RED ON INDICATES SIM INITIALIZATION*/
+				/*TURN ON BLUE LED*/
+				GPIO_DRV_ClearPinOutput(LEDRGB_BLUE);
+				/*TURN OFF RED LED*/
+				GPIO_DRV_SetPinOutput(LEDRGB_RED);
+
+				if (SIM800L_ESTABLISH_TCP_CONNECTION())
+				{
+					errors_tcp = 0;
+					state = TRY_TO_SEND;
+				}
+				else
+				{
+					if(++errors_tcp == TCP_MAX_RETRIES)
+					{
+						errors_tcp = 0;
+						state = CONNECT_GPRS;
+					}
+				}
+				break;
+
+			case TRY_TO_SEND:
+				if (SIM800L_IS_READY_TO_SEND())
+				{
+					errors_ready_to_send = 0;
+					state = SEND;
 					switch(messageType)
 					{
 						case SAMPLES:
@@ -449,47 +511,13 @@ SIM800L_error_t SEND_DATA_GPRS_TASK(message_t messageType, uint32_t *distanceSam
 						default:
 							break;
 					}
-					state = ESTABLISH_TCP_CONNECTION;
-				}
-				else
-				{
-					if(++errors_gprs == CONNECT_GPRS_MAX_RETRIES)
-					{
-						errors_gprs = 0;
-						state = CHECK_STATUS_SIM800L;
-					}
-				}
-				break;
-
-
-			case ESTABLISH_TCP_CONNECTION:
-				if (SIM800L_ESTABLISH_TCP_CONNECTION())
-				{
-					errors_tcp = 0;
-					state = TRY_TO_SEND;
-				}
-				else
-				{
-					if(++errors_tcp == TCP_MAX_RETRIES)
-					{
-						errors_tcp = 0;
-						state = CONNECT_GPRS;
-					}
-				}
-				break;
-
-			case TRY_TO_SEND:
-				if (SIM800L_IS_READY_TO_SEND())
-				{
-					errors_ready_to_send = 0;
-					state = SEND;
 				}
 				else
 				{
 					if(++errors_ready_to_send == TRY_TO_SEND_MAX_RETRIES)
 					{
 						errors_ready_to_send = 0;
-						state = CONNECT_GPRS;
+						state = ESTABLISH_TCP_CONNECTION;
 					}
 				}
 				break;
@@ -499,16 +527,31 @@ SIM800L_error_t SEND_DATA_GPRS_TASK(message_t messageType, uint32_t *distanceSam
 				{
 					errors_send = 0;
 					exitCode = SIM800L_SUCCESS_GPRS;
-					state = SEND_OK;
+					state = CLOSE_CONNECTION;
 				}
 				else
 				{
 					if(++errors_send == SEND_MAX_RETRIES)
 					{
 						errors_send = 0;
-						state = ESTABLISH_TCP_CONNECTION;
+						send_retries++;
+						if (send_retries==SEND_MAX_FAILURES)
+						{
+							send_retries=0;
+							state = RESET_SIM800L;
+						}
+						else
+						{
+							state = ESTABLISH_TCP_CONNECTION;
+						}
 					}
 				}
+				break;
+
+			case CLOSE_CONNECTION:
+				SIM800L_CLOSE_TCP_CONNECTION();
+				SIM800L_CIPSHUT();
+				state = SEND_OK;
 				break;
 
 			case SEND_OK:
@@ -545,13 +588,27 @@ void Application()
 	uint8_t i;
 	uint8_t trying = 1;
 	SIM800L_state_t state = INIT_SIM800L;
+	uint8_t samplingLap = 0;
 
 	while(1)
 	{
 		switch(currentState)
 		{
+
 			case RECEIVE_CONFIG:
-				RECEIVE_CONFIG_TASK(&sendPeriodHours,&samplesPerHour,&minutesLeaveIdle);
+				/*BATTERY STATUS TESTER*/
+				/*
+				while(1){
+					getBatteryStatus();
+					CONSOLE_SEND("RAW bateria: ",13);
+					CONSOLE_SEND(SIM800L.BatteryVoltageMv,strlen(SIM800L.BatteryVoltageMv));
+					CONSOLE_SEND("\r\n",2);
+					CONSOLE_SEND(SIM800L.BatteryPercentage,strlen(SIM800L.BatteryPercentage));
+					CONSOLE_SEND("\r\n",2);
+					OSA_TimeDelay(800);
+				}
+				*/
+				//RECEIVE_CONFIG_TASK(&sendPeriodHours,&samplesPerHour,&minutesLeaveIdle);
 				Init();
 
 				/******************************************
@@ -562,11 +619,19 @@ void Application()
 					switch(state){
 						case INIT_SIM800L:
 							SIM800L_INIT();
+
+							/*LED RED ON INDICATES SIM INITIALIZATION*/
+							/*TURN OFF BLUE LED*/
+							GPIO_DRV_SetPinOutput(LEDRGB_BLUE);
+							/*TURN ON RED LED*/
+							GPIO_DRV_ClearPinOutput(LEDRGB_RED);
+
 							state = CHECK_STATUS_SIM800L;
 							break;
 
 						case RESET_SIM800L:
 							SIM800L_RESET();
+							errors_network=0;
 							state = CHECK_STATUS_SIM800L;
 							break;
 
@@ -594,7 +659,16 @@ void Application()
 								if(++errors_gprs == CONNECT_GPRS_MAX_RETRIES)
 								{
 									errors_gprs = 0;
-									state = CHECK_STATUS_SIM800L;
+									errors_network++;
+									if (errors_network==CONNECT_GPRS_MAX_RETRIES){
+										state= RESET_SIM800L;
+									}
+									else
+									{
+										state = CHECK_STATUS_SIM800L;
+									}
+
+
 								}
 							}
 							break;
@@ -603,8 +677,12 @@ void Application()
 				}
 
 				/******************************************
-				 * FIN ---  Me conecto hasta conexion TCP
+				 * FIN ---  Me conecto hasta prender GPRS
 				 *****************************************/
+
+				/*LED RED ON INDICATES SIM INITIALIZATION*/
+				/*TURN OFF RED LED*/
+				GPIO_DRV_SetPinOutput(LEDRGB_RED);
 
 				currentState = IDLE;
 				break;
@@ -641,7 +719,14 @@ void Application()
 				LM35_DEINIT();
 				MMA8451Q_INIT();
 
-				/*TIME TO MEASURE DISTANCE*/
+				/***********************************
+				******SIEMPRE MIDO DISTANCIA********
+				***********************************/
+				currentState = MEASURE_DISTANCE;
+
+				/***********************************/
+				/*
+				/*TIME TO MEASURE DISTANCE
 				if(minutes == minutesLeaveIdle)
 				{
 					minutes=0;
@@ -651,6 +736,9 @@ void Application()
 				{
 					currentState = IDLE;
 				}
+
+				*/
+				/***********************************/
 
 				/*CONTAINER FALL*/
 				if  ( (boardState = MMA8451_GET_STATE(MMA8451_HORIZONTAL)) == MMA8451_FALL)
@@ -718,12 +806,36 @@ void Application()
 				CONSOLE_SEND(Mb7360.Distance,strlen(Mb7360.Distance));
 				CONSOLE_SEND("mm\r\n",4);
 
-				/*ONE HOUR LAPSE*/
+				/*Mido bateria*/
+				getBatteryStatus();
+				CONSOLE_SEND("RAW bateria: ",13);
+				CONSOLE_SEND(SIM800L.BatteryVoltageMv,strlen(SIM800L.BatteryVoltageMv));
+				CONSOLE_SEND("\r\n",2);
+
+
+				/******************************************
+				 * MANEJO CUANDO COMUNICO POR VUELTAS
+				 ******************************************/
+				samplingLap++;
+				if (samplingLap == COMUNICATE_SAMPLING_LAP){
+					LPTMR_DRV_Stop(LPTMR_0_IDX);
+					samplingLap=0;
+					messageType = SAMPLES;
+					currentState = SEND_DATA;
+				}
+				else
+				{
+					currentState = IDLE;
+				}
+
+				/***********************************/
+				/*
+				/*ONE HOUR LAPSE*
 				if (++samples == samplesPerHour)
 				{
 					samples = 0;
 					distanceSamplesArray[arrayIndex++] = distance;
-					/*SEND PERIOD HOUR LAPSE: TIME TO SEND DATA*/
+					/*SEND PERIOD HOUR LAPSE: TIME TO SEND DATA*
 					if(1)
 					//if(++hours == sendPeriodHours)
 					{
@@ -742,6 +854,9 @@ void Application()
 				{
 					currentState = IDLE;
 				}
+
+				*/
+				/***********************************/
 
 				/*EXTREME CASE: SET FULL ALARM*/
 				if(distance < DISTANCE_THRESHOLD)
@@ -842,4 +957,52 @@ void Application()
 				break;
 		}
 	}
+}
+
+void getBatteryStatus(){
+
+	/*Init*/
+
+	adc16_hw_average_config_t ADC_0_HW_AVERAGE_CONFIG;
+	adc16_calibration_param_t ADC0_CALIBRATION_PARAMS;
+
+	ADC16_DRV_Init(ADC0_IDX,&ADC_0_CONFIG);
+
+	ADC_0_HW_AVERAGE_CONFIG.hwAverageEnable=true;
+	ADC_0_HW_AVERAGE_CONFIG.hwAverageCountMode=kAdc16HwAverageCountOf8;
+	ADC16_DRV_ConfigHwAverage(ADC0_IDX,&ADC_0_HW_AVERAGE_CONFIG);
+
+	ADC16_DRV_GetAutoCalibrationParam(ADC0_IDX, &ADC0_CALIBRATION_PARAMS);
+	ADC16_DRV_SetCalibrationParam(ADC0_IDX, &ADC0_CALIBRATION_PARAMS);
+
+	 float result;
+	 uint16_t ADC0_SE12_RAW_VALUE;
+	 uint16_t finalResult;
+
+	 ADC16_DRV_ConfigConvChn(ADC0_IDX,0,&ADC_0_SE12_CONFIG);
+	 ADC16_DRV_WaitConvDone(ADC0_IDX,CHANNEL_GROUP);
+	 ADC0_SE12_RAW_VALUE=ADC16_DRV_GetConvValueRAW(ADC0_IDX,CHANNEL_GROUP);
+
+	 result =  ( ADC0_SE12_RAW_VALUE * 3300.0 ) / ADC0_MAX_VALUE;
+	 finalResult = (int) result;
+	 if(ADC0_SE12_RAW_VALUE>ADC_RAW_MAX_BATTERY_LEVEL){
+		 sprintf(SIM800L.BatteryPercentage,"%s","100%");
+	 }
+	 else{
+		 if (ADC0_SE12_RAW_VALUE>ADC_RAW_MAX_BATTERY_LEVEL-ADC_RAW_STEP_BATTERY_LEVEL){
+			 sprintf(SIM800L.BatteryPercentage,"%s","90%");
+		 }
+		 else
+		 {
+			 sprintf(SIM800L.BatteryPercentage,"%s","?");
+		 }
+	 }
+	 //sprintf(SIM800L.BatteryPercentage,"%d",finalResult);
+	 sprintf(SIM800L.BatteryVoltageMv,"%d",ADC0_SE12_RAW_VALUE);
+
+
+
+
+	/*Deinit*/
+	ADC16_DRV_Deinit(ADC0_IDX);
 }

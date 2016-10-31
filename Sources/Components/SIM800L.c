@@ -55,9 +55,10 @@ void SIM800L_INIT()
 	UART_DRV_InstallRxCallback(UART_1_IDX,UART_1_RxCallback,&(SIM800L.UART1_RxByte),NULL,true);
 
 	/*Turn ON Relay*/
+	/*
 	GPIO_DRV_ClearPinOutput(RELAY_IN_PIN);
 	OSA_TimeDelay(2000);
-
+	*/
 
 	do{
 		GPIO_DRV_ClearPinOutput(SIM900_PWRKEY_PIN);
@@ -440,17 +441,17 @@ uint8_t SIM800L_CLOSE_TCP_CONNECTION()
 uint8_t SIM800L_IS_ATTACHED_TO_GPRS()
 {
 	uint8_t ok=0;
-	uint8_t *word="1";
+	uint8_t *word="OK";
 
 	/*Shutdown GPRS connection*/
 	SIM800L_SEND_ENTER();
 	SIM800L_SEND_COMMAND(AT_CGATT_0,strlen(AT_CGATT_0));
-	OSA_TimeDelay(6000);
+	OSA_TimeDelay(7000);
 
 	SIM800L_SEND_ENTER();
 
 	SIM800L_SEND_COMMAND(AT_CGATT_1,strlen(AT_CGATT_1));
-	OSA_TimeDelay(6000);
+	OSA_TimeDelay(10000);
 
 	if(SIM800L_FIND_WORD_IN_BUFFER(word,strlen(word)) )
 	{
@@ -470,20 +471,50 @@ uint8_t SIM800L_GPRS_ATTACHMENT_OK()
 {
 	uint8_t ok=0;
 	uint8_t *word="OK";
+	uint8_t *word1="1";
 
 	SIM800L_SEND_ENTER();
+	/*Cheack GPRS attachment status*/
+	SIM800L_SEND_COMMAND(AT_CGATT,strlen(AT_CGATT));
 
-	SIM800L_SEND_COMMAND(AT_CGATT_1,strlen(AT_CGATT_1));
-	OSA_TimeDelay(6000);
+	/*If GPRS is attached*/
+	if(SIM800L_FIND_WORD_IN_BUFFER(word1,strlen(word1))){
 
-	if(SIM800L_FIND_WORD_IN_BUFFER(word,strlen(word)) )
-	{
-		ok=1;
-		CONSOLE_SEND("ATTACHMENT TO GPRS OK\r\n",23);
+		SIM800L_SEND_ENTER();
+		SIM800L_SEND_COMMAND(AT_CGATT_0,strlen(AT_CGATT_0));
+		OSA_TimeDelay(7000);
+
+		SIM800L_SEND_ENTER();
+		SIM800L_SEND_COMMAND(AT_CGATT_1,strlen(AT_CGATT_1));
+		OSA_TimeDelay(10000);
+
+		if(SIM800L_FIND_WORD_IN_BUFFER(word,strlen(word)) )
+		{
+			ok=1;
+			CONSOLE_SEND("ATTACHMENT TO GPRS OK\r\n",23);
+		}
+		else
+		{
+			CONSOLE_SEND("ATTACHMENT TO GPRS NOT OK\r\n",27);
+		}
+
 	}
 	else
 	{
-		CONSOLE_SEND("ATTACHMENT TO GPRS NOT OK\r\n",27);
+		SIM800L_SEND_ENTER();
+		SIM800L_SEND_COMMAND(AT_CGATT_1,strlen(AT_CGATT_1));
+		OSA_TimeDelay(10000);
+
+		if(SIM800L_FIND_WORD_IN_BUFFER(word,strlen(word)) )
+		{
+			ok=1;
+			CONSOLE_SEND("ATTACHMENT TO GPRS OK\r\n",23);
+		}
+		else
+		{
+			CONSOLE_SEND("ATTACHMENT TO GPRS NOT OK\r\n",27);
+		}
+
 	}
 
 	SIM800L_FLUSH_RX_BUFFER();
@@ -513,6 +544,8 @@ uint8_t SIM800L_IS_REGISTERED_TO_NETWORK()
 	return ok;
 }
 
+
+/*
 uint8_t SIM800L_GET_BATTERY_VOLTAGE_MV()
 {
 	uint8_t *word="ERROR";
@@ -657,7 +690,7 @@ uint8_t SIM800L_GET_BATTERY_PERCENTAGE()
 	return ok;
 
 }
-
+*/
 
 uint8_t SIM800L_GET_IMEI()
 {
@@ -1062,17 +1095,18 @@ uint8_t SIM800L_CHECK_STATUS()
 	{
 		ok=0;
 	}
-	/*AT+CBC*/
+	/*
+	/*AT+CBC
 	if( ! SIM800L_GET_BATTERY_PERCENTAGE())
 	{
 		ok=0;
 	}
-	/*AT+CBC*/
+	/*AT+CBC
 	if( ! SIM800L_GET_BATTERY_VOLTAGE_MV())
 	{
 		ok=0;
 	}
-
+	*/
 	SIM800L_MUX();
 
 	return ok;
@@ -1090,15 +1124,15 @@ uint8_t SIM800L_CONNECT_GPRS()
 	}
 
 
-
 	/*AT_CGATT?*/
-	if (SIM800L_IS_ATTACHED_TO_GPRS())
+	if (SIM800L_GPRS_ATTACHMENT_OK())
 	{
 		/*AT+CSTT="CMNET"*/
 		if (!SIM800L_START_APN_OK())
 		{
 			ok=0;
 		}
+
 		/*AT+CIICR*/
 		if (!SIM800L_IS_GPRS_CONNECTION_ACTIVE())
 		{
@@ -1114,15 +1148,6 @@ uint8_t SIM800L_CONNECT_GPRS()
 		{
 		ok=0;
 		}
-
-	/*
-	/*AT_CGATT=1
-	if (!SIM800L_GPRS_ATTACHMENT_OK())
-	{
-		ok=0;
-	}
-	*/
-
 
 	return ok;
 
@@ -1149,7 +1174,7 @@ uint8_t SIM800L_PREPARE_SMS()
 void SIM800L_SEND_ENTER()
 {
 	SIM800L_SEND_COMMAND(ENTER,strlen(ENTER));
-	OSA_TimeDelay(3000);
+	OSA_TimeDelay(5000);
 	SIM800L_FLUSH_RX_BUFFER();
 }
 

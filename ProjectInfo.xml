@@ -163,7 +163,6 @@
       <PathName>C:\Users\SoporteSEM\workspace.kds\MICR_KDS\Sources\Components\MMA8451Q_Files\fxos_api.c</PathName>
       <PathName>C:\Users\SoporteSEM\workspace.kds\MICR_KDS\Sources\Components\MMA8451Q_Files\mma8451_api.c</PathName>
       <PathName>C:\Users\SoporteSEM\workspace.kds\MICR_KDS\Sources\Components\SIM800L.c</PathName>
-      <PathName>C:\Users\SoporteSEM\workspace.kds\MICR_KDS\Sources\Components\US015.c</PathName>
       <PathName>C:\Users\SoporteSEM\workspace.kds\MICR_KDS\Sources\Components\UTILITIES.c</PathName>
       <PathName>C:\Users\SoporteSEM\workspace.kds\MICR_KDS\Sources\Events.c</PathName>
       <PathName>C:\Users\SoporteSEM\workspace.kds\MICR_KDS\Sources\StateMachine.c</PathName>
@@ -246,7 +245,6 @@
       <PathName>C:\Users\SoporteSEM\workspace.kds\MICR_KDS\Sources\Components\MMA8451Q_Files\fxos_def.h</PathName>
       <PathName>C:\Users\SoporteSEM\workspace.kds\MICR_KDS\Sources\Components\MMA8451Q_Files\mma8451_api.h</PathName>
       <PathName>C:\Users\SoporteSEM\workspace.kds\MICR_KDS\Sources\Components\SIM800L.h</PathName>
-      <PathName>C:\Users\SoporteSEM\workspace.kds\MICR_KDS\Sources\Components\US015.h</PathName>
       <PathName>C:\Users\SoporteSEM\workspace.kds\MICR_KDS\Sources\Components\UTILITIES.h</PathName>
       <PathName>C:\Users\SoporteSEM\workspace.kds\MICR_KDS\Sources\Events.h</PathName>
       <PathName>C:\Users\SoporteSEM\workspace.kds\MICR_KDS\Sources\Hardware.h</PathName>

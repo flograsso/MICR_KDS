@@ -44,7 +44,7 @@
  * @brief Time that SIM800L is given for searching networks in milliseconds
  *
  */
-#define SIM800L_WAIT_FOR_NETWORK_MS 20000
+#define SIM800L_WAIT_FOR_NETWORK_MS 25000
 /**
  * @brief UART1 RX BUFFER SIZE IN BYTES
  *
@@ -134,7 +134,7 @@ typedef struct{
 	uint32_t UART1_RxBuffer_Index;
 	uint8_t  Imei[SIM800L_IMEI_LENGTH+1];
 	uint8_t  Signal[3];
-	uint8_t  BatteryPercentage[4];
+	uint8_t  BatteryPercentage[5];
 	uint8_t  BatteryVoltageMv[5];
 	uint8_t  Sim_Ready;
 	uint8_t  Active;

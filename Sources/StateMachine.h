@@ -12,7 +12,7 @@
 #define SOURCES_STATEMACHINE_H_
 
 #include "Hardware.h"
-
+#include "ADC_0.h"
 /**
  * @brief Flag to set DEBUG mode ON/OFF
  *
@@ -41,7 +41,7 @@
 	 * @attention SET TO ONE MINUTE (60000000) => MÁX TIME SLEEPING
 	 *
 	 */
-	#define LPTMR_INTERRUPT_PERIOD_US		500000 /*1 SEC - DEBUGGING TIME*/
+	#define LPTMR_INTERRUPT_PERIOD_US		3000000 /*1 SEC - DEBUGGING TIME =1000000 */
 
 	/**
 	 * @brief Time for LPTMR config timeout interrupt in microseconds
@@ -54,6 +54,8 @@
 	 * @details 15 sec
 	 */
 	#define FALL_ALARM_COUNTER_MAX 15
+
+	#define COMUNICATE_SAMPLING_LAP 1
 
 #else
 	/*NORMAL MODE*/
@@ -88,6 +90,23 @@
 	 */
 	#define FALL_ALARM_COUNTER_MAX 5
 #endif
+
+
+/**
+ * @brief CHANNEL GROUP FOR ADC
+ *
+ */
+#define CHANNEL_GROUP 0
+/**
+ * @brief ADC0 VREFH IN MILIVOLTS
+ *
+ */
+#define ADC0_VREFH 3300
+/**
+ * @brief MAXIMUM NUMBER FOR ADC WITH 16-BIT RESOLUTION
+ *
+ */
+#define ADC0_MAX_VALUE 65535
 
 /**
  * @brief Maximun number of hours for sending data
@@ -126,13 +145,27 @@
  * @brief Max continued entries to SEND_DATA state
  *
  */
-#define SEND_MAX_FAILURES	5
+#define SEND_MAX_FAILURES	3
 
 /**
  * @brief Number of samples to calculate outlier values and average
  *
  */
 #define DISTANCE_SAMPLES_AVG	6
+
+/**
+ * @brief Max ADC0 RAW VALUE battery voltage
+ * @attention Its depends of kind of battery
+ *
+ */
+#define ADC_RAW_MAX_BATTERY_LEVEL	41000
+
+/**
+ * @brief Step ADC0 RAW VALUE battery voltage decrease 10%
+ * @attention Its depends of kind of battery
+ *
+ */
+#define ADC_RAW_STEP_BATTERY_LEVEL	5000
 
 
 /**
@@ -278,5 +311,5 @@ SIM800L_error_t SEND_DATA_SMS_TASK(message_t messageType, uint32_t *distanceSamp
  *
  */
 SIM800L_error_t SEND_DATA_GPRS_TASK(message_t messageType, uint32_t *distanceSamplesArray, uint32_t samplesNumber);
-
+void getBatteryStatus();
 #endif /* SOURCES_STATEMACHINE_H_ */
