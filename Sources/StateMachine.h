@@ -53,7 +53,7 @@
 	 * @brief Number of LPTMR interrupts to send FALL_ALARM
 	 * @details 15 sec
 	 */
-	#define FALL_ALARM_COUNTER_MAX 15
+	#define FALL_ALARM_COUNTER_MAX 2
 
 	#define COMUNICATE_SAMPLING_LAP 1
 
@@ -158,14 +158,14 @@
  * @attention Its depends of kind of battery
  *
  */
-#define ADC_RAW_MAX_BATTERY_LEVEL	41000
+#define ADC_RAW_MAX_BATTERY_LEVEL	44000
 
 /**
  * @brief Step ADC0 RAW VALUE battery voltage decrease 10%
  * @attention Its depends of kind of battery
  *
  */
-#define ADC_RAW_STEP_BATTERY_LEVEL	5000
+#define ADC_RAW_STEP_BATTERY_LEVEL	1000
 
 
 /**

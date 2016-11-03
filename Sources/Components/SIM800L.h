@@ -138,7 +138,7 @@ typedef struct{
 	uint8_t  BatteryVoltageMv[5];
 	uint8_t  Sim_Ready;
 	uint8_t  Active;
-
+	uint8_t  timeOutFlag;
 }SIM800L_t;
 
 /**
@@ -389,13 +389,28 @@ uint8_t SIM800L_IS_RESPONDING_NO_ECHO();
 uint8_t SIM800L_IS_SIM_READY();
 /**
  *
- * This method checks if a specified string is in rx buffer
+ * This method checks if a specified string is in rx buffer and sets a timeout
  *
- * @author Valentin Korenblit
+ * @author Lo Grasso Federico
  * @return 1 if success or 0 if command failed
+ * @param word word to find in buffer
+ * @param wordSize size of word to find
+ * @param timeOutUS timeout time
  *
  */
-uint8_t SIM800L_FIND_WORD_IN_BUFFER(uint8_t *word, uint32_t wordSize);
+uint8_t SIM800L_FIND_WORD_IN_BUFFER(uint8_t *word, uint32_t wordSize,uint32_t timeOutUS);
+/**
+ *
+ * This method checks if a specified string isn't in rx buffer and sets a timeout
+ *
+ * @author Lo Grasso Federico
+ * @return 1 if success or 0 if command failed
+ * @param word word to find in buffer
+ * @param wordSize size of word to find
+ * @param timeOutUS timeout time
+ *
+ */
+uint8_t SIM800L_FIND_ERROR_IN_BUFFER(uint8_t *word, uint32_t wordSize,uint32_t timeOutUS);
 /**
  *
  * This method gets the IMEI of SIM800L: AT+CGSN
@@ -500,8 +515,8 @@ uint8_t SIM800L_IS_GPRS_CONNECTION_ACTIVE();
 uint8_t SIM800L_CONNECT_GPRS();
 /**
  *
- * This method checks if SIM800L is attached to GPRS
- * @author Valentin Koreblit
+ * This method attach SIM900 to GPRS
+ * @author Federico Lo Grasso
  * @return 1 if success or 0 if command failed
  *
  */
@@ -587,7 +602,20 @@ uint8_t SIM800L_SELECT_TE_CHAR_SET_GSM();
  *
  */
 uint8_t SIM800L_PREPARE_SMS();
+/**
+ *
+ * This method sends a empty command to clean SIM900 buffer
+ * @author Lo Grasso Federico
+ *
+ */
+
 void SIM800L_SEND_ENTER();
+/**
+ *
+ * This method sets SIM900 MUX to 0
+ * @author Lo Grasso Federico
+ *
+ */
 void SIM800L_MUX();
-uint8_t SIM800L_GET_IP_STATUS();
+
 #endif /* SOURCES_COMPONENTS_SIM800L_H_ */

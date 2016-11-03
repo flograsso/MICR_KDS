@@ -84,10 +84,9 @@ void CREATE_HTTP_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSample
 	/*ENVIO DE POSICION*/
 	/*Tambien le quite que envie el nro de muestras (1). Siempre va a mandar 1*/
 	/*
-		sprintf(buffer,"GET %s?imei=%s&battery_voltage=%s&battery_percentage=%s&temperature=%s&signal_strength=%s&sample0=%s&orientation=%s&message_type=%s HTTP/1.1\r\nHost: %s\r\n\r\n\x1A",
+		sprintf(buffer,"GET %s?imei=%s&battery_percentage=%s&temperature=%s&signal_strength=%s&sample0=%s&orientation=%s&message_type=%s HTTP/1.1\r\nHost: %s\r\n\r\n\x1A",
 				SERVICE_ROUTE_CESPI,
 				SIM800L.Imei,
-				SIM800L.BatteryVoltageMv,
 				SIM800L.BatteryPercentage,
 				Lm35.Temperature,
 				SIM800L.Signal,
@@ -99,7 +98,7 @@ void CREATE_HTTP_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSample
 	*/
 
 
-	sprintf(buffer,"GET %s?imei=%s&battery_voltage=%s&battery_percentage=%s&temperature=%s&signal_strength=%s&samples_number=%d&message_type=%s",
+	sprintf(buffer,"GET %s?imei=%s&battery_voltage=%s&battery_percentage=%s&temperature=%s&signal_strength=%s&samples_number=%d&message_type=%s&sample0=%d",
 			SERVICE_ROUTE_CESPI,
 			SIM800L.Imei,
 			SIM800L.BatteryVoltageMv,
@@ -107,21 +106,12 @@ void CREATE_HTTP_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSample
 			Lm35.Temperature,
 			SIM800L.Signal,
 			sendPeriodHours,
-			stringFromMessageType(messageType)
+			stringFromMessageType(messageType),
+			Mb7360.Distance
 			);
 
-
-
-	/*BORRAR TODO ESTO -->*/
-	for(i=0;i<sendPeriodHours;i++)
-	{
-		sprintf(buffer+strlen(buffer),"&sample%d=%d",
-		i,
-		distanceSamplesArray[i]);
-	}
-
 	sprintf(buffer+strlen(buffer)," HTTP/1.1\r\nHost: %s\r\n\r\n\x1A",SERVER_CESPI);
-	/*<-- BORRAR TODO ESTO*/
+
 
 
 	/*
@@ -148,10 +138,9 @@ void CREATE_HTTP_ALERT(uint8_t *buffer,uint32_t size,message_t messageType)
 /*ENVIO DE POSICION*/
 /*Tambien le quite que envie el nro de muestras (1). Siempre va a mandar 1*/
 /*
-	sprintf(buffer,"GET %s?imei=%s&battery_voltage=%s&battery_percentage=%s&temperature=%s&signal_strength=%s&sample0=%s&orientation=%s&message_type=%s HTTP/1.1\r\nHost: %s\r\n\r\n\x1A",
+	sprintf(buffer,"GET %s?imei=%s&battery_percentage=%s&temperature=%s&signal_strength=%s&sample0=%s&orientation=%s&message_type=%s HTTP/1.1\r\nHost: %s\r\n\r\n\x1A",
 			SERVICE_ROUTE_CESPI,
 			SIM800L.Imei,
-			SIM800L.BatteryVoltageMv,
 			SIM800L.BatteryPercentage,
 			Lm35.Temperature,
 			SIM800L.Signal,
@@ -574,7 +563,6 @@ void Application()
 	uint32_t errors_network = 0;
 	uint32_t errors_gprs = 0;
 	uint32_t errors_tcp = 0;
-	static state_t currentState = RECEIVE_CONFIG;
 	static uint32_t sendPeriodHours, samplesPerHour,minutesLeaveIdle,fallCounter = 0;
 	static uint32_t distanceSamplesArray[MAX_ALLOWED_SEND_PERIOD_HOURS];
 	static uint16_t distanceValues[DISTANCE_SAMPLES_AVG];
@@ -588,6 +576,7 @@ void Application()
 	uint8_t i;
 	uint8_t trying = 1;
 	SIM800L_state_t state = INIT_SIM800L;
+	static state_t currentState = RECEIVE_CONFIG;
 	uint8_t samplingLap = 0;
 
 	while(1)
@@ -596,8 +585,8 @@ void Application()
 		{
 
 			case RECEIVE_CONFIG:
-				/*BATTERY STATUS TESTER*/
-				/*
+
+				/*BATTERY STATUS TESTER
 				while(1){
 					getBatteryStatus();
 					CONSOLE_SEND("RAW bateria: ",13);
@@ -605,14 +594,16 @@ void Application()
 					CONSOLE_SEND("\r\n",2);
 					CONSOLE_SEND(SIM800L.BatteryPercentage,strlen(SIM800L.BatteryPercentage));
 					CONSOLE_SEND("\r\n",2);
-					OSA_TimeDelay(800);
+					OSA_TimeDelay(2000);
 				}
 				*/
 				//RECEIVE_CONFIG_TASK(&sendPeriodHours,&samplesPerHour,&minutesLeaveIdle);
+
+
 				Init();
 
 				/******************************************
-				 * Me conecto hasta conexion TCP
+				 * Me conecto hasta iniciar GPRS
 				 *****************************************/
 
 				while (trying){
@@ -623,6 +614,7 @@ void Application()
 							/*LED RED ON INDICATES SIM INITIALIZATION*/
 							/*TURN OFF BLUE LED*/
 							GPIO_DRV_SetPinOutput(LEDRGB_BLUE);
+
 							/*TURN ON RED LED*/
 							GPIO_DRV_ClearPinOutput(LEDRGB_RED);
 
@@ -677,7 +669,7 @@ void Application()
 				}
 
 				/******************************************
-				 * FIN ---  Me conecto hasta prender GPRS
+				 * FIN ---  Me conecto hasta inciar GPRS
 				 *****************************************/
 
 				/*LED RED ON INDICATES SIM INITIALIZATION*/
@@ -713,7 +705,7 @@ void Application()
 				currentState = MEASURE_TEMPERATURE;
 				break;
 
-			case MEASURE_TEMPERATURE:				/*EVERY MINUTE*/
+			case MEASURE_TEMPERATURE:
 				LM35_INIT();
 				temperature = LM35_GET_TEMPERATURE_CELSIUS();
 				LM35_DEINIT();
@@ -726,19 +718,6 @@ void Application()
 
 				/***********************************/
 				/*
-				/*TIME TO MEASURE DISTANCE
-				if(minutes == minutesLeaveIdle)
-				{
-					minutes=0;
-					currentState = MEASURE_DISTANCE;
-				}
-				else
-				{
-					currentState = IDLE;
-				}
-
-				*/
-				/***********************************/
 
 				/*CONTAINER FALL*/
 				if  ( (boardState = MMA8451_GET_STATE(MMA8451_HORIZONTAL)) == MMA8451_FALL)
@@ -789,12 +768,14 @@ void Application()
 
 			case MEASURE_DISTANCE:
 				MB7360_INIT();
+
 				/*Get DISTANCE_SAMPLES_AVG number of samples*/
 				for (i = 0; i<DISTANCE_SAMPLES_AVG;i++){
 					MB7360_START_RANGING();
 					distanceValues[i]=MB7360_GET_DISTANCE_MM();
 					OSA_TimeDelay(400);
 				}
+
 				/*Delete outlier values and calculate average*/
 				distance = UTILITIES_OUTLIER_AVG(distanceValues,DISTANCE_SAMPLES_AVG);
 
@@ -806,15 +787,15 @@ void Application()
 				CONSOLE_SEND(Mb7360.Distance,strlen(Mb7360.Distance));
 				CONSOLE_SEND("mm\r\n",4);
 
-				/*Mido bateria*/
+				/*Test Battery*/
 				getBatteryStatus();
-				CONSOLE_SEND("RAW bateria: ",13);
-				CONSOLE_SEND(SIM800L.BatteryVoltageMv,strlen(SIM800L.BatteryVoltageMv));
+				CONSOLE_SEND("Battery Level: ",13);
+				CONSOLE_SEND(SIM800L.BatteryPercentage,strlen(SIM800L.BatteryPercentage));
 				CONSOLE_SEND("\r\n",2);
 
 
 				/******************************************
-				 * MANEJO CUANDO COMUNICO POR VUELTAS
+				 * MANEJO PERÍODO DE COMUNICACION EN BASE AL Nº DE VUELTAS DEL LOOP PCIPAL
 				 ******************************************/
 				samplingLap++;
 				if (samplingLap == COMUNICATE_SAMPLING_LAP){
@@ -983,24 +964,51 @@ void getBatteryStatus(){
 	 ADC16_DRV_WaitConvDone(ADC0_IDX,CHANNEL_GROUP);
 	 ADC0_SE12_RAW_VALUE=ADC16_DRV_GetConvValueRAW(ADC0_IDX,CHANNEL_GROUP);
 
-	 result =  ( ADC0_SE12_RAW_VALUE * 3300.0 ) / ADC0_MAX_VALUE;
-	 finalResult = (int) result;
-	 if(ADC0_SE12_RAW_VALUE>ADC_RAW_MAX_BATTERY_LEVEL){
-		 sprintf(SIM800L.BatteryPercentage,"%s","100%");
-	 }
-	 else{
-		 if (ADC0_SE12_RAW_VALUE>ADC_RAW_MAX_BATTERY_LEVEL-ADC_RAW_STEP_BATTERY_LEVEL){
-			 sprintf(SIM800L.BatteryPercentage,"%s","90%");
-		 }
-		 else
-		 {
-			 sprintf(SIM800L.BatteryPercentage,"%s","?");
-		 }
-	 }
-	 //sprintf(SIM800L.BatteryPercentage,"%d",finalResult);
 	 sprintf(SIM800L.BatteryVoltageMv,"%d",ADC0_SE12_RAW_VALUE);
 
-
+	 /*Match the RAW_VALUE with the battery level (its depends of battery model)*/
+	 if(ADC0_SE12_RAW_VALUE < (ADC_RAW_MAX_BATTERY_LEVEL-ADC_RAW_STEP_BATTERY_LEVEL*6))
+	 {
+		 sprintf(SIM800L.BatteryPercentage,"%s","1");
+	 }
+	 else{
+			 if(ADC0_SE12_RAW_VALUE < (ADC_RAW_MAX_BATTERY_LEVEL-ADC_RAW_STEP_BATTERY_LEVEL*5))
+			 {
+				 sprintf(SIM800L.BatteryPercentage,"%s","20");
+			 }
+			 else
+			 {
+				 if(ADC0_SE12_RAW_VALUE < (ADC_RAW_MAX_BATTERY_LEVEL-ADC_RAW_STEP_BATTERY_LEVEL*4))
+				 {
+					 sprintf(SIM800L.BatteryPercentage,"%s","40");
+				 }
+				 else
+				 {
+					 if(ADC0_SE12_RAW_VALUE < (ADC_RAW_MAX_BATTERY_LEVEL-ADC_RAW_STEP_BATTERY_LEVEL*3))
+					 {
+						 sprintf(SIM800L.BatteryPercentage,"%s","60");
+					 }
+					 else
+					 {
+						 if(ADC0_SE12_RAW_VALUE < (ADC_RAW_MAX_BATTERY_LEVEL-ADC_RAW_STEP_BATTERY_LEVEL*2))
+						 {
+							 sprintf(SIM800L.BatteryPercentage,"%s","80");
+						 }
+						 else
+						 {
+							 if(ADC0_SE12_RAW_VALUE < (ADC_RAW_MAX_BATTERY_LEVEL-ADC_RAW_STEP_BATTERY_LEVEL))
+							 {
+								 sprintf(SIM800L.BatteryPercentage,"%s","90");
+							 }
+							 else
+							 {
+								 sprintf(SIM800L.BatteryPercentage,"%s","100");
+							 }
+						 }
+					 }
+				 }
+		 }
+	 }
 
 
 	/*Deinit*/

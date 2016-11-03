@@ -130,6 +130,9 @@ void LPTMR_0_OnTimerCompare(void)
 
 	/*Configuration Timeout*/
 	Console.configFlag=1;
+
+	/*SIM Command Wait Timeout*/
+	SIM800L.timeOutFlag=1;
 }
 
 /*
