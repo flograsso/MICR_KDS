@@ -1140,10 +1140,8 @@ uint8_t SIM800L_CONNECT_GPRS()
 	uint8_t ok=1;
 
 	/*AT+CIPSHUT*/
-	if (!SIM800L_CIPSHUT())
-	{
-			ok=0;
-	}
+	SIM800L_CIPSHUT();
+
 
 
 	/*AT_CGATT?*/

@@ -31,18 +31,15 @@ void CREATE_SMS_SAMPLES(uint8_t *buffer,uint32_t size,message_t messageType)
 		buffer[i] = '\0';
 	}
 
-	sprintf(buffer,"imei=%s\nbattery_voltage=%s\nbattery_percentage=%s\ntemperature=%s\nsignal_strength=%s\nsample0=%s\norientation=%s\nmessage_type=%s\r\n\r\n\x1A",
+	sprintf(buffer,"%s\nImei=%s\nBattery Percentage=%s\nTemperature=%s\nSignal Strength=%s\Container Capacity=%s\nContainer Orientation=%s\r\n\r\n\x1A",
+			stringFromMessageType(messageType),
 			SIM800L.Imei,
-			SIM800L.BatteryVoltageMv,
 			SIM800L.BatteryPercentage,
 			Lm35.Temperature,
 			SIM800L.Signal,
-			Mb7360.Distance,
-			Mma8451q.position,
-			stringFromMessageType(messageType)
+			containerCapacity,
+			Mma8451q.position
 	);
-
-
 }
 
 void CREATE_SMS_ALERT(uint8_t *buffer,uint32_t size,message_t messageType)
@@ -56,15 +53,14 @@ void CREATE_SMS_ALERT(uint8_t *buffer,uint32_t size,message_t messageType)
 
 
 
-	sprintf(buffer,"imei=%s\nbattery_voltage=%s\nbattery_percentage=%s\ntemperature=%s\nsignal_strength=%s\nsample0=%s\norientation=%s\nmessage_type=%s\r\n\r\n\x1A",
+	sprintf(buffer,"%s\nImei=%s\nBattery Percentage=%s\nTemperature=%s\nSignal Strength=%s\Container Capacity=%s\nContainer Orientation=%s\r\n\r\n\x1A",
+			stringFromMessageType(messageType),
 			SIM800L.Imei,
-			SIM800L.BatteryVoltageMv,
 			SIM800L.BatteryPercentage,
 			Lm35.Temperature,
 			SIM800L.Signal,
-			Mb7360.Distance,
-			Mma8451q.position,
-			stringFromMessageType(messageType)
+			containerCapacity,
+			Mma8451q.position
 	);
 
 
@@ -90,7 +86,7 @@ void CREATE_HTTP_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSample
 				SIM800L.BatteryPercentage,
 				Lm35.Temperature,
 				SIM800L.Signal,
-				Mb7360.Distance,
+				containerCapacity,
 				Mma8451q.position,
 				stringFromMessageType(messageType),
 				SERVER_CESPI
@@ -144,7 +140,7 @@ void CREATE_HTTP_ALERT(uint8_t *buffer,uint32_t size,message_t messageType)
 			SIM800L.BatteryPercentage,
 			Lm35.Temperature,
 			SIM800L.Signal,
-			Mb7360.Distance,
+			containerCapacity,
 			Mma8451q.position,
 			stringFromMessageType(messageType),
 			SERVER_CESPI
@@ -556,6 +552,9 @@ void Init(){
 	MB7360_CALIBRATE();
 	/*Clear the SIM900-PWRKEY pin*/
 	GPIO_DRV_ClearPinOutput(GPIO_PTC8);
+
+	/*Turn On Indicative LED*/
+	GPIO_DRV_SetPinOutput(GPIO_PTC2);
 }
 void Application()
 {
@@ -568,6 +567,7 @@ void Application()
 	static uint16_t distanceValues[DISTANCE_SAMPLES_AVG];
 	static message_t messageType = SAMPLES;
 	static uint16_t distance;
+	static uint16_t containerCapacity[3];
 	//static uint8_t HTTP_BUFFER[256];
 	static float temperature;
 	static SIM800L_error_t exitCode;
@@ -585,6 +585,40 @@ void Application()
 		{
 
 			case RECEIVE_CONFIG:
+
+				/*DISTANCE AND BATTERY TESTER LOOP
+				Init();
+				while (1){
+					MB7360_INIT();
+
+					/*Get DISTANCE_SAMPLES_AVG number of samples
+					for (i = 0; i<DISTANCE_SAMPLES_AVG;i++){
+						MB7360_START_RANGING();
+						distanceValues[i]=MB7360_GET_DISTANCE_MM();
+						OSA_TimeDelay(400);
+					}
+
+					/*Delete outlier values and calculate average
+					distance = UTILITIES_OUTLIER_AVG(distanceValues,DISTANCE_SAMPLES_AVG);
+
+					MB7360_DEINIT();
+
+					/*Show distance
+					sprintf(Mb7360.Distance,"%d",distance);
+					CONSOLE_SEND("MB7360 DISTANCE VALUE: ",23);
+					CONSOLE_SEND(Mb7360.Distance,strlen(Mb7360.Distance));
+					CONSOLE_SEND("mm\r\n",4);
+
+					/*Test Battery
+					getBatteryStatus();
+					CONSOLE_SEND("Battery Level: ",15);
+					CONSOLE_SEND(SIM800L.BatteryPercentage,strlen(SIM800L.BatteryPercentage));
+					CONSOLE_SEND("%\r\n",3);
+
+				}
+				*/
+				/*******************************************************/
+
 
 				/*BATTERY STATUS TESTER
 				while(1){
@@ -781,17 +815,72 @@ void Application()
 
 				MB7360_DEINIT();
 
+				if(distance < DISTANCE_THRESHOLD)
+				{
+					sprintf(containerCapacity,"%s","100");
+				}
+				else
+				{
+					if(distance < (DISTANCE_THRESHOLD+50))
+					{
+						sprintf(containerCapacity,"%s","80");
+					}
+					else
+					{
+						if(distance < (DISTANCE_THRESHOLD+100))
+						{
+							sprintf(containerCapacity,"%s","60");
+						}
+						else
+						{
+							if(distance < (DISTANCE_THRESHOLD+150))
+							{
+								sprintf(containerCapacity,"%s","50");
+							}
+							else
+							{
+								if(distance < (DISTANCE_THRESHOLD+200))
+								{
+									sprintf(containerCapacity,"%s","40");
+								}
+								else
+								{
+									if(distance < (DISTANCE_THRESHOLD+250))
+									{
+										sprintf(containerCapacity,"%s","30");
+									}
+									else
+									{
+										if(distance < (DISTANCE_THRESHOLD+300))
+										{
+											sprintf(containerCapacity,"%s","10");
+										}
+										else
+										{
+											sprintf(containerCapacity,"%s","0");
+										}
+									}
+							}
+						}
+					}
+				}
+		}
+
 				/*Show distance*/
 				sprintf(Mb7360.Distance,"%d",distance);
 				CONSOLE_SEND("MB7360 DISTANCE VALUE: ",23);
 				CONSOLE_SEND(Mb7360.Distance,strlen(Mb7360.Distance));
 				CONSOLE_SEND("mm\r\n",4);
 
+				CONSOLE_SEND("CONTAINER CAPACITY: ",20);
+				CONSOLE_SEND(containerCapacity,strlen(containerCapacity));
+				CONSOLE_SEND("%\r\n",3);
+
 				/*Test Battery*/
 				getBatteryStatus();
-				CONSOLE_SEND("Battery Level: ",13);
+				CONSOLE_SEND("Battery Level: ",15);
 				CONSOLE_SEND(SIM800L.BatteryPercentage,strlen(SIM800L.BatteryPercentage));
-				CONSOLE_SEND("\r\n",2);
+				CONSOLE_SEND("%\r\n",3);
 
 
 				/******************************************
@@ -940,6 +1029,7 @@ void Application()
 	}
 }
 
+/*PTB2*/
 void getBatteryStatus(){
 
 	/*Init*/
@@ -960,6 +1050,7 @@ void getBatteryStatus(){
 	 uint16_t ADC0_SE12_RAW_VALUE;
 	 uint16_t finalResult;
 
+	 /*PTB2*/
 	 ADC16_DRV_ConfigConvChn(ADC0_IDX,0,&ADC_0_SE12_CONFIG);
 	 ADC16_DRV_WaitConvDone(ADC0_IDX,CHANNEL_GROUP);
 	 ADC0_SE12_RAW_VALUE=ADC16_DRV_GetConvValueRAW(ADC0_IDX,CHANNEL_GROUP);

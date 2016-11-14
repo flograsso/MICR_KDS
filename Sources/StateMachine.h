@@ -122,10 +122,15 @@
  */
 #define TICKS_HOUR 60
 /**
+ * @brief  Max distance readable by the sensor
+ *
+ */
+#define	DISTANCE_MAX_VALUE	430
+/**
  * @brief Distance when container is full. MB7360 returns 400mm if object is 400mm or nearer to the sensor.
  *
  */
-#define	DISTANCE_THRESHOLD	10
+#define	DISTANCE_THRESHOLD	100
 /**
  * @brief When MB7360 reading fails, it returns máx value: 4995mm
  *
@@ -311,5 +316,14 @@ SIM800L_error_t SEND_DATA_SMS_TASK(message_t messageType, uint32_t *distanceSamp
  *
  */
 SIM800L_error_t SEND_DATA_GPRS_TASK(message_t messageType, uint32_t *distanceSamplesArray, uint32_t samplesNumber);
+/**
+ *
+ * This method test the battery level
+ * @author Lo Grasso Federico
+ * @return void
+ *
+ */
 void getBatteryStatus();
+
+
 #endif /* SOURCES_STATEMACHINE_H_ */
