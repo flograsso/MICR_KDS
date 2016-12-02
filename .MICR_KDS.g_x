@@ -301,5 +301,5 @@
       <File Name="SDK/platform/drivers/src/lpsci/fsl_lpsci_common.c" FileDate="2016-05-31, 14:51:50" FileAge="1464717110000" FileType="1048576" CompNumb="19" />
     </GeneratedByPE>
   </GeneratedFilesList>
-  <CodeGenReference>95</CodeGenReference>
+  <CodeGenReference>97</CodeGenReference>
 </CodeGenerationInfo>

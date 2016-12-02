@@ -22,7 +22,13 @@ static char * stringFromMessageType(message_t messageType)
     return messageTypeAsString[messageType];
 }
 
-void CREATE_SMS_SAMPLES(uint8_t *buffer,uint32_t size,message_t messageType)
+static char * stringFromOrientationState(MMA8451_state_t orientation)
+{
+    const char *orientationStateAsString[] = { "MMA8451_OK","MMA8451_FALL"};
+    return orientationStateAsString[orientation];
+}
+
+void CREATE_SMS_SAMPLES(uint8_t *buffer,uint32_t size,message_t messageType,uint16_t *containerOccupation)
 {
 	int i;
 
@@ -31,18 +37,18 @@ void CREATE_SMS_SAMPLES(uint8_t *buffer,uint32_t size,message_t messageType)
 		buffer[i] = '\0';
 	}
 
-	sprintf(buffer,"%s\nImei=%s\nBattery Percentage=%s\nTemperature=%s\nSignal Strength=%s\Container Capacity=%s\nContainer Orientation=%s\r\n\r\n\x1A",
+	sprintf(buffer,"%s\nImei=%s\nBattery Percentage=%s\nTemperature=%s\nSignal Strength=%s\Container Occupation=%s\nContainer Orientation=%s\r\n\r\n\x1A",
 			stringFromMessageType(messageType),
 			SIM800L.Imei,
 			SIM800L.BatteryPercentage,
 			Lm35.Temperature,
 			SIM800L.Signal,
-			containerCapacity,
-			Mma8451q.position
+			Mb7360.Distance,
+			stringFromOrientationState(Mma8451q.position)
 	);
 }
 
-void CREATE_SMS_ALERT(uint8_t *buffer,uint32_t size,message_t messageType)
+void CREATE_SMS_ALERT(uint8_t *buffer,uint32_t size,message_t messageType,uint16_t *containerOccupation)
 {
 	int i;
 
@@ -53,21 +59,21 @@ void CREATE_SMS_ALERT(uint8_t *buffer,uint32_t size,message_t messageType)
 
 
 
-	sprintf(buffer,"%s\nImei=%s\nBattery Percentage=%s\nTemperature=%s\nSignal Strength=%s\Container Capacity=%s\nContainer Orientation=%s\r\n\r\n\x1A",
+	sprintf(buffer,"%s\nImei=%s\nBattery Percentage=%s\nTemperature=%s\nSignal Strength=%s\Container Occupation=%s\nContainer Orientation=%s\r\n\r\n\x1A",
 			stringFromMessageType(messageType),
 			SIM800L.Imei,
 			SIM800L.BatteryPercentage,
 			Lm35.Temperature,
 			SIM800L.Signal,
-			containerCapacity,
-			Mma8451q.position
+			Mb7360.Distance,
+			stringFromOrientationState(Mma8451q.position)
 	);
 
 
 
 }
 
-void CREATE_HTTP_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSamplesArray,uint32_t sendPeriodHours,message_t messageType)
+void CREATE_HTTP_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSamplesArray,uint32_t sendPeriodHours,message_t messageType,uint16_t *containerOccupation)
 {
 	int i;
 
@@ -77,24 +83,22 @@ void CREATE_HTTP_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSample
 	}
 
 
-	/*ENVIO DE POSICION*/
-	/*Tambien le quite que envie el nro de muestras (1). Siempre va a mandar 1*/
-	/*
-		sprintf(buffer,"GET %s?imei=%s&battery_percentage=%s&temperature=%s&signal_strength=%s&sample0=%s&orientation=%s&message_type=%s HTTP/1.1\r\nHost: %s\r\n\r\n\x1A",
+		sprintf(buffer,"GET %s?imei=%s&battery_percentage=%s&temperature=%s&signal_strength=%s&containerOccupation=%s&orientation=%s&message_type=%s HTTP/1.1\r\nHost: %s\r\n\r\n\x1A",
 				SERVICE_ROUTE_CESPI,
 				SIM800L.Imei,
 				SIM800L.BatteryPercentage,
 				Lm35.Temperature,
 				SIM800L.Signal,
-				containerCapacity,
-				Mma8451q.position,
+				containerOccupation,
+				stringFromOrientationState(Mma8451q.position),
 				stringFromMessageType(messageType),
 				SERVER_CESPI
 				);
-	*/
 
 
-	sprintf(buffer,"GET %s?imei=%s&battery_voltage=%s&battery_percentage=%s&temperature=%s&signal_strength=%s&samples_number=%d&message_type=%s&sample0=%d",
+#if 0
+
+	sprintf(buffer,"GET %s?imei=%s&battery_voltage=%s&battery_percentage=%s&temperature=%s&signal_strength=%s&samples_number=1&sample0=%d&message_type=%s HTTP/1.1\r\nHost: %s\r\n\r\n\x1A",
 			SERVICE_ROUTE_CESPI,
 			SIM800L.Imei,
 			SIM800L.BatteryVoltageMv,
@@ -102,27 +106,18 @@ void CREATE_HTTP_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSample
 			Lm35.Temperature,
 			SIM800L.Signal,
 			sendPeriodHours,
+			Mb7360.Distance,
 			stringFromMessageType(messageType),
-			Mb7360.Distance
+			SERVER_CESPI
 			);
 
-	sprintf(buffer+strlen(buffer)," HTTP/1.1\r\nHost: %s\r\n\r\n\x1A",SERVER_CESPI);
 
-
-
-	/*
-	for(i=0;i<size;i++)
-	{
-		buffer[i] = '\0';
-	}
-	sprintf(buffer,"GET /connection.php?imei=0139111155555555555555555555559000647787&battery_voltage=4127&battery_percentage=094&temperature=23.24&signal_strength=25&samples_number=0&message_type=SAMPLES&sample0=111 HTTP/1.1\r\nHost: gmotion.com.ar\r\n\r\n\x1A");
-
-	*/
+#endif
 
 }
 
 
-void CREATE_HTTP_ALERT(uint8_t *buffer,uint32_t size,message_t messageType)
+void CREATE_HTTP_ALERT(uint8_t *buffer,uint32_t size,message_t messageType,uint16_t *containerOccupation)
 {
 	int i;
 
@@ -131,21 +126,20 @@ void CREATE_HTTP_ALERT(uint8_t *buffer,uint32_t size,message_t messageType)
 		buffer[i] = '\0';
 	}
 
-/*ENVIO DE POSICION*/
-/*Tambien le quite que envie el nro de muestras (1). Siempre va a mandar 1*/
-/*
-	sprintf(buffer,"GET %s?imei=%s&battery_percentage=%s&temperature=%s&signal_strength=%s&sample0=%s&orientation=%s&message_type=%s HTTP/1.1\r\nHost: %s\r\n\r\n\x1A",
+
+	sprintf(buffer,"GET %s?imei=%s&battery_percentage=%s&temperature=%s&signal_strength=%s&containerOccupation=%s&orientation=%s&message_type=%s HTTP/1.1\r\nHost: %s\r\n\r\n\x1A",
 			SERVICE_ROUTE_CESPI,
 			SIM800L.Imei,
 			SIM800L.BatteryPercentage,
 			Lm35.Temperature,
 			SIM800L.Signal,
-			containerCapacity,
-			Mma8451q.position,
+			containerOccupation,
+			stringFromOrientationState(Mma8451q.position),
 			stringFromMessageType(messageType),
 			SERVER_CESPI
 			);
-*/
+
+#if 0
 
 	sprintf(buffer,"GET %s?imei=%s&battery_voltage=%s&battery_percentage=%s&temperature=%s&signal_strength=%s&samples_number=1&sample0=%s&message_type=%s HTTP/1.1\r\nHost: %s\r\n\r\n\x1A",
 			SERVICE_ROUTE_CESPI,
@@ -158,7 +152,7 @@ void CREATE_HTTP_ALERT(uint8_t *buffer,uint32_t size,message_t messageType)
 			stringFromMessageType(messageType),
 			SERVER_CESPI
 			);
-
+#endif
 }
 
 
@@ -222,7 +216,7 @@ void RECEIVE_CONFIG_TASK(uint32_t *sendPeriodHours,uint32_t *samplesPerHour, uin
 	* minutesLeaveIdle = TICKS_HOUR / (*samplesPerHour);
 }
 
-SIM800L_error_t SEND_DATA_SMS_TASK(message_t messageType, uint32_t *distanceSamplesArray, uint32_t samplesNumber)
+SIM800L_error_t SEND_DATA_SMS_TASK(message_t messageType, uint32_t *distanceSamplesArray, uint32_t samplesNumber,uint16_t *containerOccupation)
 {
 	uint32_t reboots = 0;
 	uint32_t partialReboots = 0;
@@ -304,19 +298,19 @@ SIM800L_error_t SEND_DATA_SMS_TASK(message_t messageType, uint32_t *distanceSamp
 					switch(messageType)
 					{
 						case SAMPLES:
-							CREATE_SMS_SAMPLES(SMS_BUFFER,strlen(SMS_BUFFER),messageType);
+							CREATE_SMS_SAMPLES(SMS_BUFFER,strlen(SMS_BUFFER),messageType,containerOccupation);
 							break;
 
 						case FULL_ALARM:
-							CREATE_SMS_ALERT(SMS_BUFFER,strlen(SMS_BUFFER),messageType);
+							CREATE_SMS_ALERT(SMS_BUFFER,strlen(SMS_BUFFER),messageType,containerOccupation);
 							break;
 
 						case FIRE_ALARM:
-							CREATE_SMS_ALERT(SMS_BUFFER,strlen(SMS_BUFFER),messageType);
+							CREATE_SMS_ALERT(SMS_BUFFER,strlen(SMS_BUFFER),messageType,containerOccupation);
 							break;
 
 						case FALL_ALARM:
-							CREATE_SMS_ALERT(SMS_BUFFER,strlen(SMS_BUFFER),messageType);
+							CREATE_SMS_ALERT(SMS_BUFFER,strlen(SMS_BUFFER),messageType,containerOccupation);
 							break;
 
 						default:
@@ -384,7 +378,7 @@ SIM800L_error_t SEND_DATA_SMS_TASK(message_t messageType, uint32_t *distanceSamp
 }
 
 
-SIM800L_error_t SEND_DATA_GPRS_TASK(message_t messageType, uint32_t *distanceSamplesArray, uint32_t samplesNumber)
+SIM800L_error_t SEND_DATA_GPRS_TASK(message_t messageType, uint32_t *distanceSamplesArray, uint32_t samplesNumber,uint16_t *containerOccupation)
 {
 	uint32_t reboots = 0;
 	uint32_t partialReboots = 0;
@@ -478,19 +472,19 @@ SIM800L_error_t SEND_DATA_GPRS_TASK(message_t messageType, uint32_t *distanceSam
 					switch(messageType)
 					{
 						case SAMPLES:
-							CREATE_HTTP_SAMPLES(HTTP_BUFFER,strlen(HTTP_BUFFER),distanceSamplesArray,samplesNumber,messageType);
+							CREATE_HTTP_SAMPLES(HTTP_BUFFER,strlen(HTTP_BUFFER),distanceSamplesArray,samplesNumber,messageType,containerOccupation);
 							break;
 
 						case FULL_ALARM:
-							CREATE_HTTP_ALERT(HTTP_BUFFER,strlen(HTTP_BUFFER),messageType);
+							CREATE_HTTP_ALERT(HTTP_BUFFER,strlen(HTTP_BUFFER),messageType,containerOccupation);
 							break;
 
 						case FIRE_ALARM:
-							CREATE_HTTP_ALERT(HTTP_BUFFER,strlen(HTTP_BUFFER),messageType);
+							CREATE_HTTP_ALERT(HTTP_BUFFER,strlen(HTTP_BUFFER),messageType,containerOccupation);
 							break;
 
 						case FALL_ALARM:
-							CREATE_HTTP_ALERT(HTTP_BUFFER,strlen(HTTP_BUFFER),messageType);
+							CREATE_HTTP_ALERT(HTTP_BUFFER,strlen(HTTP_BUFFER),messageType,containerOccupation);
 							break;
 
 						default:
@@ -554,7 +548,7 @@ void Init(){
 	GPIO_DRV_ClearPinOutput(GPIO_PTC8);
 
 	/*Turn On Indicative LED*/
-	GPIO_DRV_SetPinOutput(GPIO_PTC2);
+	//GPIO_DRV_SetPinOutput(GPIO_PTC2);
 }
 void Application()
 {
@@ -567,7 +561,7 @@ void Application()
 	static uint16_t distanceValues[DISTANCE_SAMPLES_AVG];
 	static message_t messageType = SAMPLES;
 	static uint16_t distance;
-	static uint16_t containerCapacity[3];
+	static uint16_t containerOccupation[3];
 	//static uint8_t HTTP_BUFFER[256];
 	static float temperature;
 	static SIM800L_error_t exitCode;
@@ -586,41 +580,39 @@ void Application()
 
 			case RECEIVE_CONFIG:
 
-				/*DISTANCE AND BATTERY TESTER LOOP
+# if 0
+				/*DISTANCE TESTER LOOP*/
 				Init();
 				while (1){
 					MB7360_INIT();
 
-					/*Get DISTANCE_SAMPLES_AVG number of samples
+					/*Get DISTANCE_SAMPLES_AVG number of samples*/
 					for (i = 0; i<DISTANCE_SAMPLES_AVG;i++){
 						MB7360_START_RANGING();
 						distanceValues[i]=MB7360_GET_DISTANCE_MM();
 						OSA_TimeDelay(400);
 					}
 
-					/*Delete outlier values and calculate average
+					/*Delete outlier values and calculate average*/
 					distance = UTILITIES_OUTLIER_AVG(distanceValues,DISTANCE_SAMPLES_AVG);
 
 					MB7360_DEINIT();
 
-					/*Show distance
+					/*Show distance*/
 					sprintf(Mb7360.Distance,"%d",distance);
 					CONSOLE_SEND("MB7360 DISTANCE VALUE: ",23);
 					CONSOLE_SEND(Mb7360.Distance,strlen(Mb7360.Distance));
 					CONSOLE_SEND("mm\r\n",4);
 
-					/*Test Battery
-					getBatteryStatus();
-					CONSOLE_SEND("Battery Level: ",15);
-					CONSOLE_SEND(SIM800L.BatteryPercentage,strlen(SIM800L.BatteryPercentage));
-					CONSOLE_SEND("%\r\n",3);
+
 
 				}
-				*/
-				/*******************************************************/
 
 
-				/*BATTERY STATUS TESTER
+#endif
+
+#if 0
+				/*BATTERY STATUS TESTER*/
 				while(1){
 					getBatteryStatus();
 					CONSOLE_SEND("RAW bateria: ",13);
@@ -632,7 +624,7 @@ void Application()
 				}
 				*/
 				//RECEIVE_CONFIG_TASK(&sendPeriodHours,&samplesPerHour,&minutesLeaveIdle);
-
+#endif
 
 				Init();
 
@@ -756,6 +748,7 @@ void Application()
 				/*CONTAINER FALL*/
 				if  ( (boardState = MMA8451_GET_STATE(MMA8451_HORIZONTAL)) == MMA8451_FALL)
 				{
+					Mma8451q.position=MMA8451_FALL;
 					if(!fallAlarmSent)
 					{
 						fallCounter++;
@@ -763,7 +756,10 @@ void Application()
 							CONSOLE_SEND("FALL ALARM\r\n",12);
 							messageType = FALL_ALARM;
 							currentState = SEND_DATA;
-							Mma8451q.position=MMA8451_FALL;
+						}
+						else
+						{
+							Mma8451q.position=MMA8451_OK;
 						}
 					}
 				}
@@ -803,68 +799,48 @@ void Application()
 			case MEASURE_DISTANCE:
 				MB7360_INIT();
 
-				/*Get DISTANCE_SAMPLES_AVG number of samples*/
+				/*GET DISTANCE_SAMPLES_AVG NUMBER OF SAMPLES*/
 				for (i = 0; i<DISTANCE_SAMPLES_AVG;i++){
 					MB7360_START_RANGING();
 					distanceValues[i]=MB7360_GET_DISTANCE_MM();
 					OSA_TimeDelay(400);
 				}
 
-				/*Delete outlier values and calculate average*/
+				/*DELETE OUTLIER VALUES AND CALCULATE AVERAGE*/
 				distance = UTILITIES_OUTLIER_AVG(distanceValues,DISTANCE_SAMPLES_AVG);
 
 				MB7360_DEINIT();
 
+				/*CALCULATE CONTAINER CAPACITY*/
 				if(distance < DISTANCE_THRESHOLD)
 				{
-					sprintf(containerCapacity,"%s","100");
+					sprintf(containerOccupation,"%s","100");
 				}
 				else
 				{
-					if(distance < (DISTANCE_THRESHOLD+50))
+					if(distance < (DISTANCE_THRESHOLD+100))
 					{
-						sprintf(containerCapacity,"%s","80");
+						sprintf(containerOccupation,"%s","90");
 					}
 					else
 					{
-						if(distance < (DISTANCE_THRESHOLD+100))
+						if(distance < (DISTANCE_THRESHOLD+200))
 						{
-							sprintf(containerCapacity,"%s","60");
+							sprintf(containerOccupation,"%s","60");
 						}
 						else
 						{
-							if(distance < (DISTANCE_THRESHOLD+150))
+							if(distance < (DISTANCE_THRESHOLD+300))
 							{
-								sprintf(containerCapacity,"%s","50");
+								sprintf(containerOccupation,"%s","30");
 							}
 							else
 							{
-								if(distance < (DISTANCE_THRESHOLD+200))
-								{
-									sprintf(containerCapacity,"%s","40");
-								}
-								else
-								{
-									if(distance < (DISTANCE_THRESHOLD+250))
-									{
-										sprintf(containerCapacity,"%s","30");
-									}
-									else
-									{
-										if(distance < (DISTANCE_THRESHOLD+300))
-										{
-											sprintf(containerCapacity,"%s","10");
-										}
-										else
-										{
-											sprintf(containerCapacity,"%s","0");
-										}
-									}
+								sprintf(containerOccupation,"%s","0");
 							}
 						}
 					}
 				}
-		}
 
 				/*Show distance*/
 				sprintf(Mb7360.Distance,"%d",distance);
@@ -872,8 +848,8 @@ void Application()
 				CONSOLE_SEND(Mb7360.Distance,strlen(Mb7360.Distance));
 				CONSOLE_SEND("mm\r\n",4);
 
-				CONSOLE_SEND("CONTAINER CAPACITY: ",20);
-				CONSOLE_SEND(containerCapacity,strlen(containerCapacity));
+				CONSOLE_SEND("CONTAINER OCCUPATION: ",22);
+				CONSOLE_SEND(containerOccupation,strlen(containerOccupation));
 				CONSOLE_SEND("%\r\n",3);
 
 				/*Test Battery*/
@@ -929,7 +905,7 @@ void Application()
 				/***********************************/
 
 				/*EXTREME CASE: SET FULL ALARM*/
-				if(distance < DISTANCE_THRESHOLD)
+				if(distance < DISTANCE_FULL_ALARM_THRESHOLD)
 				{
 					if(!fullAlarmSent)
 					{
@@ -947,7 +923,7 @@ void Application()
 				break;
 
 			case SEND_DATA:
-				switch(exitCode = SEND_DATA_GPRS_TASK(messageType, distanceSamplesArray,sendPeriodHours) )
+				switch(exitCode = SEND_DATA_GPRS_TASK(messageType, distanceSamplesArray,sendPeriodHours,containerOccupation) )
 				{
 					case SIM800L_SUCCESS_GPRS:
 						switch(messageType)
@@ -980,7 +956,7 @@ void Application()
 					case SIM800L_CANT_SEND_TO_SERVER:
 					case SIM800L_CANT_CONNECT_SERVER:
 						CONSOLE_SEND("TRYING TO SEND SMS\r\n",20);
-						switch( exitCode = SEND_DATA_SMS_TASK(messageType, distanceSamplesArray,sendPeriodHours))
+						switch( exitCode = SEND_DATA_SMS_TASK(messageType, distanceSamplesArray,sendPeriodHours,containerOccupation))
 						{
 							case SIM800L_SUCCESS_SMS:
 								switch(messageType)

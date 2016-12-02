@@ -127,10 +127,15 @@
  */
 #define	DISTANCE_MAX_VALUE	430
 /**
- * @brief Distance when container is full. MB7360 returns 400mm if object is 400mm or nearer to the sensor.
+ * @brief Distance when container is full. .
  *
  */
-#define	DISTANCE_THRESHOLD	100
+#define	DISTANCE_THRESHOLD				50
+/**
+ * @brief Distance when FULL ALARM is sent
+ *
+ */
+#define	DISTANCE_FULL_ALARM_THRESHOLD	130
 /**
  * @brief When MB7360 reading fails, it returns máx value: 4995mm
  *
@@ -227,6 +232,16 @@ void Application();
  *
  */
 static char * stringFromMessageType(message_t messageType);
+
+/**
+ *
+ * This method returns the string for each orientation state
+ * @author Lo Grasso Federico
+ * @param FALL or OK
+ * @return string with the name of the orientatios state
+ *
+ */
+static char * stringFromOrientationState(MMA8451_state_t orientation);
 /**
  *
  * This method creates the string to be sent through HTTP to the server
@@ -237,7 +252,7 @@ static char * stringFromMessageType(message_t messageType);
  * @return void
  *
  */
-void CREATE_HTTP_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSamplesArray,uint32_t sendPeriodHours,message_t messageType);
+void CREATE_HTTP_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSamplesArray,uint32_t sendPeriodHours,message_t messageType,uint16_t *containerOccupation);
 /**
  *
  * This method creates the string to be sent through HTTP to the server. Alert => only last measures
@@ -248,7 +263,7 @@ void CREATE_HTTP_SAMPLES(uint8_t *buffer, uint32_t size,uint32_t *distanceSample
  * @return void
  *
  */
-void CREATE_HTTP_ALERT(uint8_t *buffer,uint32_t size,message_t messageType);
+void CREATE_HTTP_ALERT(uint8_t *buffer,uint32_t size,message_t messageType,uint16_t *containerOccupation);
 /**
  *
  * This method creates the string to be sent through SMS. Values are sent in each line
@@ -260,7 +275,7 @@ void CREATE_HTTP_ALERT(uint8_t *buffer,uint32_t size,message_t messageType);
  * @return void
  *
  */
-void CREATE_SMS_SAMPLES(uint8_t *buffer,uint32_t size,message_t messageType);
+void CREATE_SMS_SAMPLES(uint8_t *buffer,uint32_t size,message_t messageType,uint16_t *containerOccupation);
 /**
  *
  * This method creates the string to be sent through SMS. Values are sent in each line. Alert => only last measures
@@ -271,7 +286,7 @@ void CREATE_SMS_SAMPLES(uint8_t *buffer,uint32_t size,message_t messageType);
  * @return void
  *
  */
-void CREATE_SMS_ALERT(uint8_t *buffer,uint32_t size,message_t messageType);
+void CREATE_SMS_ALERT(uint8_t *buffer,uint32_t size,message_t messageType,uint16_t *containerOccupation);
 /**
  * This method receives configuration parameters for the application.
  * @author Valentin Korenblit
@@ -298,7 +313,7 @@ void RECEIVE_CONFIG_TASK(uint32_t *sendPeriodHours,uint32_t *samplesPerHour, uin
 			SIM800L_CANT_PREPARE_FOR_SMS
  *
  */
-SIM800L_error_t SEND_DATA_SMS_TASK(message_t messageType, uint32_t *distanceSamplesArray, uint32_t samplesNumber);
+SIM800L_error_t SEND_DATA_SMS_TASK(message_t messageType, uint32_t *distanceSamplesArray, uint32_t samplesNumber,uint16_t *containerOccupation);
 /**
  * This tries to send data through GPRS
  * @author Valentin Korenblit
@@ -315,7 +330,7 @@ SIM800L_error_t SEND_DATA_SMS_TASK(message_t messageType, uint32_t *distanceSamp
 			SIM800L_CANT_PREPARE_FOR_SMS
  *
  */
-SIM800L_error_t SEND_DATA_GPRS_TASK(message_t messageType, uint32_t *distanceSamplesArray, uint32_t samplesNumber);
+SIM800L_error_t SEND_DATA_GPRS_TASK(message_t messageType, uint32_t *distanceSamplesArray, uint32_t samplesNumber,uint16_t *containerOccupation);
 /**
  *
  * This method test the battery level
