@@ -37,11 +37,8 @@ mb7360_t Mb7360;
 
 void MB7360_CALIBRATE()
 {
-	 OSA_TimeDelay(500);
-	 GPIO_DRV_ClearPinOutput(GPIO_PTC9);
-	 OSA_TimeDelay(100);
 	 GPIO_DRV_SetPinOutput(GPIO_PTC9);
-	 OSA_TimeDelay(300);
+	 OSA_TimeDelay(250);
 	 GPIO_DRV_ClearPinOutput(GPIO_PTC9);
 
 }
@@ -73,9 +70,8 @@ void MB7360_DEINIT()
 void MB7360_START_RANGING()
 {
 	GPIO_DRV_SetPinOutput(GPIO_PTC9);
-	OSA_TimeDelay(300);
+	OSA_TimeDelay(50);
 	GPIO_DRV_ClearPinOutput(GPIO_PTC9);
-	OSA_TimeDelay(500);
 }
 
 uint16_t MB7360_GET_DISTANCE_MM()
@@ -114,7 +110,7 @@ uint16_t MB7360_GET_DISTANCE_MM()
 	 /*******************************
 	  *****SHOW DISTANCE NO AVG******
 	  *******************************/
-#if 1
+#if 0
 
 	 CONSOLE_SEND("MB7360 DISTANCE VALUE NO AVG: ",30);
 	 CONSOLE_SEND(Mb7360.Distance,strlen(Mb7360.Distance));

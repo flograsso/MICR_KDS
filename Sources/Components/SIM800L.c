@@ -104,10 +104,7 @@ void SIM800L_RESET(){
 	UART_DRV_Init(UART_1_IDX,&UART_1_STATE,&UART_1_CONFIG);
 	UART_DRV_InstallRxCallback(UART_1_IDX,UART_1_RxCallback,&(SIM800L.UART1_RxByte),NULL,true);
 
-	/* RELAY CONTROL
-	/*Turn ON Relay
-	GPIO_DRV_ClearPinOutput(RELAY_IN_PIN);
-	*/
+
 
 	while (!SIM800L_IS_RESPONDING_NO_ECHO() && (retries <= RESET_MAX_RETRIES)){
 		GPIO_DRV_ClearPinOutput(SIM900_PWRKEY_PIN);
@@ -121,8 +118,8 @@ void SIM800L_RESET(){
 
 
 
-/*
-
+	/* POWER KEY RESET (ON/OFF) */
+#if 0
 	GPIO_DRV_ClearPinOutput(SIM900_RESET_PIN);
 	OSA_TimeDelay(2000);
 	GPIO_DRV_SetPinOutput(SIM900_RESET_PIN);
@@ -162,7 +159,8 @@ void SIM800L_RESET(){
 		retries++;
 	}
 	while (!SIM800L_IS_RESPONDING_NO_ECHO() && (retries <= RESET_MAX_RETRIES));
-	*/
+
+#endif
 
 	SIM800L_FLUSH_RX_BUFFER();
 }
@@ -551,7 +549,7 @@ uint8_t SIM800L_IS_REGISTERED_TO_NETWORK()
 }
 
 
-/*
+#if 0
 uint8_t SIM800L_GET_BATTERY_VOLTAGE_MV()
 {
 	uint8_t *word="ERROR";
@@ -632,8 +630,10 @@ uint8_t SIM800L_GET_BATTERY_VOLTAGE_MV()
 	return ok;
 }
 
+#endif
 
 
+#if 0
 uint8_t SIM800L_GET_BATTERY_PERCENTAGE()
 {
 	uint8_t *word="ERROR";
@@ -696,7 +696,7 @@ uint8_t SIM800L_GET_BATTERY_PERCENTAGE()
 	return ok;
 
 }
-*/
+#endif
 
 uint8_t SIM800L_GET_IMEI()
 {
@@ -1027,7 +1027,9 @@ uint8_t SIM800L_FIND_ERROR_IN_BUFFER(uint8_t *word, uint32_t wordSize,uint32_t t
 }
 
 
-/*
+
+ /* OLD VERSION OF FIND WORD IN BUFFER*/
+#if 0
 uint8_t SIM800L_FIND_WORD_IN_BUFFER(uint8_t *word, uint32_t wordSize)
 {
 	uint32_t indexBuffer=0;
@@ -1098,7 +1100,8 @@ uint8_t SIM800L_FIND_WORD_IN_BUFFER(uint8_t *word, uint32_t wordSize)
 	return ok;
 
 }
-*/
+#endif
+
 uint8_t SIM800L_CHECK_STATUS()
 {
 	uint8_t ok=1;
@@ -1199,7 +1202,7 @@ void SIM800L_SEND_ENTER()
 }
 
 
-/*
+#if 0
 uint8_t SIM800L_GET_IP_STATUS()
 {
 	uint8_t ok=0;
@@ -1243,4 +1246,4 @@ uint8_t SIM800L_GET_IP_STATUS()
 	SIM800L_FLUSH_RX_BUFFER();
 	return ok;
 }
-*/
+#endif

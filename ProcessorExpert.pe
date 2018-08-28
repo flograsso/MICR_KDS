@@ -3,7 +3,7 @@
   <Header>
     <Name>MICR_KDS</Name>
     <SavedBy>Valentin</SavedBy>
-    <ModificationStamp>114</ModificationStamp>
+    <ModificationStamp>115</ModificationStamp>
     <Date>2016-02-23</Date>
     <IDE>Eclipse IDE</IDE>
     <PEversion>1.12.2.RT7_b1550-0615</PEversion>
@@ -16133,8 +16133,8 @@
         <ItemSymbol>CMP0_IN3_PTC9_I2C0_SDA_TPM0_CH5_pull_enable</ItemSymbol>
         <ReadOnly>false</ReadOnly>
         <UserReadOnly>false</UserReadOnly>
-        <Value>&lt;Automatic&gt;</Value>
-        <PinFuncPropStateId>&lt;Automatic&gt;</PinFuncPropStateId>
+        <Value>Enabled</Value>
+        <PinFuncPropStateId>enable</PinFuncPropStateId>
       </ItemState>
       <ItemState>
         <ItemSymbol>PTC10_I2C1_SCL</ItemSymbol>

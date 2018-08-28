@@ -55,8 +55,10 @@ void MMA8451Q_GET_DATA()
 	Mma8451q.xAngle = abs((int16_t)(Mma8451q.xData * 0.011));
 	Mma8451q.yAngle = abs((int16_t)(Mma8451q.yData * 0.011));
 
-	/*To show values*/
-	/*
+
+	/*TO SHOW VALUES*/
+#if 0
+
 	char aux[10];
 
 	sprintf(&aux,"%d",Mma8451q.xAngle);
@@ -68,7 +70,9 @@ void MMA8451Q_GET_DATA()
 	CONSOLE_SEND("Y angle: ",9);
 	CONSOLE_SEND(&aux,strlen(aux));
 	CONSOLE_SEND("\r\n",2);
-	*/
+
+#endif
+
 }
 
 

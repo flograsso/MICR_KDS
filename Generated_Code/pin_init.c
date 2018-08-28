@@ -7,7 +7,7 @@
 **     Version     : Component 1.2.0, Driver 1.4, CPU db: 3.00.000
 **     Repository  : KSDK 1.3.0
 **     Compiler    : GNU C Compiler
-**     Date/Time   : 2016-11-14, 15:01, # CodeGen: 94
+**     Date/Time   : 2016-12-07, 12:22, # CodeGen: 97
 **     Abstract    :
 **
 **     Settings    :
@@ -819,7 +819,7 @@
 **                Drive strength                           : <Automatic>
 **                Passive filter                           : <Automatic>
 **                Pull select                              : <Automatic>
-**                Pull enable                              : <Automatic>
+**                Pull enable                              : Enabled
 **              Pin 67: PTC10/I2C1_SCL                     : 
 **                Custom name, Signal name                 : J1_13
 **                Slew rate                                : <Automatic>
@@ -1033,6 +1033,7 @@ void init_gpio_pins(uint32_t instance)
       PORT_HAL_SetMuxMode(PORTC,8UL,kPortMuxAsGpio);
       /* Affects PORTC_PCR9 register */
       PORT_HAL_SetMuxMode(PORTC,9UL,kPortMuxAsGpio);
+      PORT_HAL_SetPullCmd(PORTC,9UL,true);
       break;
     case GPIOD_IDX:                     /* GPIOD_IDX */
       /* Affects PORTD_PCR1 register */

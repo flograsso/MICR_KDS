@@ -7,7 +7,7 @@
 **     Version     : Component 1.2.0, Driver 1.4, CPU db: 3.00.000
 **     Repository  : KSDK 1.3.0
 **     Compiler    : GNU C Compiler
-**     Date/Time   : 2016-11-09, 09:47, # CodeGen: 93
+**     Date/Time   : 2016-12-07, 12:22, # CodeGen: 97
 **     Abstract    :
 **
 **     Settings    :
@@ -819,7 +819,7 @@
 **                Drive strength                           : <Automatic>
 **                Passive filter                           : <Automatic>
 **                Pull select                              : <Automatic>
-**                Pull enable                              : <Automatic>
+**                Pull enable                              : Enabled
 **              Pin 67: PTC10/I2C1_SCL                     : 
 **                Custom name, Signal name                 : J1_13
 **                Slew rate                                : <Automatic>
